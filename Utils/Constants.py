@@ -31,7 +31,7 @@ class DC_Constants():
 
         },
 
-        'TransferEntropy':{
+        'TE':{
             
             'directed': True,
             'lagged': True

@@ -1,6 +1,8 @@
 import numpy as np
 from Utils.General import *
 
+from kneed import KneeLocator
+
 def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ratio = 0.98, kernel = 'PLI', **kwargs):
 
     # Issues:
@@ -13,13 +15,17 @@ def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ra
         'orders_matrix': None,
         'phase_freq': [4, 8],
         'amp_freq': [36, 42],
-        'PAC_DecompMethod': 'wavelet'
-        
+        'PAC_DecompMethod': 'wavelet',
+        'd_x': 10,
+        'd_y': 10,
+        'w_x': 1,
+        'w_y': 1
+
     }
 
     options.update(kwargs)
 
-    assert len(options) == 5, "Invalid Keyword"
+    assert len(options) == 9, "Invalid Keyword"
 
     CoreKernelFunction, KernelProperties = AssignConnectivityFunction(kernel)
 
@@ -61,6 +67,11 @@ def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ra
     specs = {'est_orders': orders_mat}
     specs['amp_freq'] = options['amp_freq']
     specs['phase_freq'] = options['phase_freq']
+
+    specs['d_x'] = options['d_x']
+    specs['d_y'] = options['d_y']
+    specs['w_x'] = options['w_x']
+    specs['w_y'] = options['w_y']
 
     assert Data.ndim == 2 or Data.ndim == 3, "Your Data must be 3 or 2 Dimensional, (Trials (optional), Channels, Time)"
 
@@ -174,7 +185,7 @@ def OrderEstimate_byChannels(Data, max_order = 50, min_order = 2, leap_length = 
 
                     pred_err = kernel(x, y, order)
                     
-                    BICs.append(BIC_calc_(pred_err, N, order))
+                    BICs.append(BIC_calc(pred_err, N, order))
 
                 orders_mat[a, b] = int(KneeLocator(orders, BICs, curve = 'convex', direction = 'decreasing').knee)
  

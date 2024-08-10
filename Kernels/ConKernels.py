@@ -2,6 +2,8 @@ import numpy as np
 import scipy.signal as signal
 
 import Utils.GC as GC
+import Utils.TE as TE_U
+from npeet import entropy_estimators as ee
 
 def LRB_GC(x, y, specs):
 
@@ -55,3 +57,29 @@ def PIB_GC(x, y, specs):
     # print("Order is", order, "and Granger Causality is", np.log(a_estimation_err(a_est_uni, x_t) / ab_estimation_err(a_est_mul, b_est_mul, x_t, y_t)), "Univar Error is", a_estimation_err(a_est_uni, x_t), "and mulvar error is", ab_estimation_err(a_est_mul, b_est_mul, x_t, y_t))
         
     return GC_val, univar_error, mulvar_error
+
+def TE(x, y, specs):
+
+    w_x = specs['w_x']
+    w_y = specs['w_y']
+
+    d_x = specs['d_x']
+    d_y = specs['d_y']
+    
+    X_lagged = TE_U.generate_lagged_vectors(x, w_x)
+    Y_lagged = TE_U.generate_lagged_vectors(y, w_y)
+
+    X_lagged = X_lagged[:-d_x-1]
+    Y_lagged = Y_lagged[:-d_y-1]
+
+    # Remove the initial part where lagged vectors are not defined
+    max_index = max(w_x + d_x , w_y + d_y)
+    if w_x + d_x == max_index:
+        Y_lagged = Y_lagged[max_index- w_y - d_y:]
+    else:         
+        X_lagged = X_lagged[max_index- w_x - d_x:]
+    
+
+    Y_t = y[max_index:]
+    
+    return ee.cmi(Y_t, X_lagged, Y_lagged)
