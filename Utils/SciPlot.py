@@ -1,3 +1,5 @@
+import numpy as np
+
 def MovMean(A, k):
 
     win_length = k

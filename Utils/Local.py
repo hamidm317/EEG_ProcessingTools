@@ -1,5 +1,6 @@
 import h5py
 from pandas import read_excel, read_csv
+import numpy as np
 
 from Utils.Constants import LocalDataConstants
 
@@ -30,7 +31,7 @@ def ExperimentDataLoader():
 
 def AvailableSubjects():
 
-    BehavioralData, tmp = ExperimentLoader()
+    BehavioralData, tmp = ExperimentDataLoader()
 
     import os
 
