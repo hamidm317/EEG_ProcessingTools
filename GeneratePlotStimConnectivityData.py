@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-import GRConnPy as GRC
+import Modules.GRConnPy as GRC
 from Utils import Local
 from Utils import Constants
 

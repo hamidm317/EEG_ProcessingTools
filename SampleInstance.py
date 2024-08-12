@@ -1,4 +1,4 @@
-import GRConnPy as GRC
+import Modules.GRConnPy as GRC
 from Utils import Local
 
 import numpy as np
