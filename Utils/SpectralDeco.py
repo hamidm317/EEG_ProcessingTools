@@ -3,62 +3,50 @@ import pywt
 
 from Utils.Constants import LocalDataConstants, SpectralConstants
 
-def WavletSpectralDecomposer(widths: np.ndarray, data, inc_channels: list, time: np.ndarray, wavelet = 'morl', band_range_output = True):
+def WavletSpectralDecomposer(data: np.ndarray, Band = 'All', wavelet = 'morl', **kwargs): #wavelet = 'morl', band_range_output = True, widths: np.ndarray):
+
+    options = {
+
+        'widths_param': SpectralConstants.WaveletParams['widths_param'][wavelet][Band],
+        'time_lims': SpectralConstants.WaveletParams['time_lims'][str(data.shape[-1])],
+        'Spectral_Res': SpectralConstants.WaveletParams['Spectral_Res']
+
+    }
+
+    options.update(kwargs)
+
+    widths_param = options['widths_param']
+    widths = np.geomspace(widths_param[0], widths_param[1], num = options['Spectral_Res'])
+
+    time = np.linspace(options['time_lims'][0], options['time_lims'][1], data.shape[-1])
 
     assert data.ndim < 4 and data.ndim > 0, "Invalid data shape"
-    assert data.shape[-1] == len(time), "Time and data lengths must be same"
-
-    if data.ndim > 1:
-        
-        assert data.shape[1] >= len(inc_channels), "Included channels must be less than/equal to data channels"
 
     CWTMat_Conn = []
 
-    if data.ndim == 3:
+    for _ in range(3 - data.ndim):
 
-        [Trials, Channels, Length] = data.shape
+        data = np.reshape(data, (1,) + data.shape)
 
+    [Trials, Channels, Length] = data.shape
 
-        for Channel_Num in inc_channels:
+    for Channel_Num in range(Channels):
 
-            CWTMat = np.zeros((len(widths), Length))
+        CWTMat = np.zeros((len(widths), Length))
 
-            for i in range(Trials):
+        for i in range(Trials):
 
-                cwtmatr, freqs = pywt.cwt(data[i, Channel_Num, :], widths, wavelet, sampling_period = np.diff(time).mean())
-                
-                CWTMat = CWTMat + 1 / Trials * cwtmatr
-
-            CWTMat_Conn.append(CWTMat)
-
-        
-    elif data.ndim == 2:
-
-        [Channels, Length] = data.shape
-
-        for Channel_Num in inc_channels:
-
-            CWTMat, freqs = pywt.cwt(data[Channel_Num, :], widths, wavelet, sampling_period = np.diff(time).mean())
-
-            CWTMat_Conn.append(CWTMat)
-
-    else:
-
-        Length = len(data)
-
-        CWTMat, freqs = pywt.cwt(data, widths, wavelet, sampling_period = np.diff(time).mean())
+            cwtmatr, freqs = pywt.cwt(data[i, Channel_Num, :], widths, wavelet, sampling_period = np.diff(time).mean())
+            
+            CWTMat = CWTMat + 1 / Trials * cwtmatr
 
         CWTMat_Conn.append(CWTMat)
 
+    outputs = []
+    outputs.append(np.squeeze(np.array(CWTMat_Conn)))
+    outputs.append(freqs)
 
-    
-    band_range = []
-
-    if band_range_output:
-
-        band_range = [np.array([np.where(freqs > SpectralConstants.BandsBounds[band][0])[-1][-1], np.where(freqs < SpectralConstants.BandsBounds[band][1])[0][0]]) for band in LocalDataConstants.names['freq_bands']]
-  
-    return np.array(CWTMat_Conn), band_range, freqs
+    return tuple(output for output in outputs)
 
 def FrequencyCalibration(widths: np.ndarray, time: np.ndarray, wavelet = 'morl'):
 

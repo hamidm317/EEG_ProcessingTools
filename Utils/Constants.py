@@ -89,6 +89,35 @@ class SpectralConstants():
         'Theta': [4, 8],
         'Alpha': [8, 12],
         'Beta': [12, 30],
-        'Gamma': [30, 50]
+        'Gamma': [30, 50],
+        'All': [0.5, 50]
 
+    }
+
+    WaveletParams = {
+
+        'wavelet': 'morl',
+        'widths_param':{
+
+            'morl': {
+
+                'All': [8, 1024],
+                'Delta': [128, 1024],
+                'Theta': [54, 128],
+                'Alpha': [32, 54],
+                'Beta': [13, 32],
+                'Gamma': [8, 13]
+            
+            }
+
+        },
+
+        'time_lims':{
+
+            '400': [-0.2, 0.6],
+            '800': [-0.4, 1.2]
+
+        },
+
+        'Spectral_Res': 40
     }
