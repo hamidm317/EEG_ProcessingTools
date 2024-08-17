@@ -23,7 +23,11 @@ def RandomBlockSampling(Length: int, NumBlock: int, NumSample_inBlock: int):
 
     Block_Len = int(Length / NumBlock)
 
-    assert NumSample_inBlock <= Block_Len, 'Number of Samples in Blocks must be less than length of Block'
+    # assert NumSample_inBlock <= Block_Len, 'Number of Samples in Blocks must be less than length of Block'
+
+    if  NumSample_inBlock >= Block_Len:
+
+        NumSample_inBlock = Block_Len
 
     SampleMat = []
 
@@ -39,7 +43,11 @@ def DeterminedBlockSampling(Length: int, NumBlock: int, NumSample_inBlock: int):
 
     Block_Len = int(Length / NumBlock)
 
-    assert NumSample_inBlock <= Block_Len, 'Number of Samples in Blocks must be less than length of Block'
+    # assert NumSample_inBlock <= Block_Len, 'Number of Samples in Blocks must be less than length of Block'
+
+    if  NumSample_inBlock >= Block_Len:
+
+        NumSample_inBlock = Block_Len
 
     SampleMat = []
 

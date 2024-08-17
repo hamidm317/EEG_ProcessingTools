@@ -7,7 +7,7 @@ def WavletSpectralDecomposer(data: np.ndarray, Band = 'All', wavelet = 'morl', *
 
     options = {
 
-        'widths_param': SpectralConstants.WaveletParams['widths_param'][wavelet][Band],
+        'widths_param': SpectralConstants.WaveletParams['widths_param'][wavelet][str(data.shape[-1])][Band],
         'time_lims': SpectralConstants.WaveletParams['time_lims'][str(data.shape[-1])],
         'Spectral_Res': SpectralConstants.WaveletParams['Spectral_Res']
 

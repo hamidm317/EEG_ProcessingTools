@@ -90,7 +90,12 @@ class SpectralConstants():
         'Alpha': [8, 12],
         'Beta': [12, 30],
         'Gamma': [30, 50],
-        'All': [0.5, 50]
+        'LowBeta': [12, 20],
+        'HighBeta': [20, 30],
+        'LowGamma': [30, 38],
+        'MidGamma': [38, 44],
+        'HighGamma': [44, 50],
+        'All': [0.5, 50] # Keep 'All' the last key!
 
     }
 
@@ -101,13 +106,36 @@ class SpectralConstants():
 
             'morl': {
 
-                'All': [8, 1024],
-                'Delta': [128, 1024],
-                'Theta': [54, 128],
-                'Alpha': [32, 54],
-                'Beta': [13, 32],
-                'Gamma': [8, 13]
-            
+                '400': {
+
+                    'All': [8, 1024],
+                    'Delta': [128, 1024],
+                    'Theta': [54, 128],
+                    'Alpha': [32, 54],
+                    'Beta': [13, 32],
+                    'Gamma': [8, 14],
+                    'LowBeta': [20, 32],
+                    'HighBeta': [12, 20],
+                    'LowGamma': [11, 14],
+                    'MidGamma': [9.2, 11],
+                    'HighGamma': [8, 9.2],
+                },
+
+                '800': {
+
+                    'All': [8, 1024],
+                    'Delta': [128, 1024],
+                    'Theta': [54, 128],
+                    'Alpha': [32, 54],
+                    'Beta': [13, 32],
+                    'Gamma': [8, 14],
+                    'LowBeta': [20, 32],
+                    'HighBeta': [12, 20],
+                    'LowGamma': [11, 14],
+                    'MidGamma': [9.2, 11],
+                    'HighGamma': [8, 9.2],
+                }
+
             }
 
         },
@@ -119,5 +147,5 @@ class SpectralConstants():
 
         },
 
-        'Spectral_Res': 40
+        'Spectral_Res': 100
     }
