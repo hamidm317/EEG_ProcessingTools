@@ -4,11 +4,26 @@ from scipy import signal
 from Utils import Constants
 from Utils import SpectralDeco as SD
 
-def PowerPhaseExt(x: np.ndarray):
+def PowerPhaseExt(x: np.ndarray, return_value = 'All'):
+
+    output = []
 
     x_a = signal.hilbert(x, axis = -1)
 
-    return np.abs(x_a), np.angle(x_a)
+    if return_value == 'All':
+
+        output.append(np.abs(x_a))
+        output.append(np.angle(x_a))
+
+    elif return_value == 'Phase':
+
+        output.append(np.angle(x_a))
+
+    elif return_value == 'Power':
+
+        output.append(np.abs(x_a))
+
+    return tuple(out for out in output)
 
 def FrequencyBandExt(Data: np.ndarray, Band = 'All'): # add kwargs and method
 
@@ -35,4 +50,4 @@ def FrequencyBandExt(Data: np.ndarray, Band = 'All'): # add kwargs and method
 
         Band_Data.append(np.mean(output[0], axis = -2))
 
-    return Band_Data
+    return np.array(Band_Data)
