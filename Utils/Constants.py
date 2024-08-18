@@ -48,14 +48,23 @@ class LocalDataConstants():
         'perform_data_dir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\Subjects_Behavioral_datas.csv',
         'eeg_prep_datasets_dir': r'E:\\HWs\Msc\\Research\\Research\\Depression Dataset\\Testing Preprocess',
         'confile_dir': r'D:\AIRLab_Research\Data\ConnectivityDataDict.pickle',
-        'plotSave_dir': r'D:\AIRLab_Research\Plots'
+        'plotSave_dir': r'D:\AIRLab_Research\Plots',
+        'fd_excel_dir': r'D:\AIRLab_Research\Features\FeatureDraft.xlsx'
     }
 
     names = {
 
         'JulyClusterNames': ['PF', 'LF', 'RF', 'MFC', 'LT', 'RT', 'LFC', 'RFC', 'MPC', 'LPC', 'RPC', 'MP', 'LPO', 'RPO'],
         'freq_bands': ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'],
-        'events': ['All', 'Neg', 'Pos', 'Stim']
+        'events': ['All', 'Neg', 'Pos', 'Stim'],
+        'LocalCM':{
+
+            'Transfer Entropy': 'TE',
+            'PLI': 'PLI',
+            'Granger Causality': 'LRB_GC',
+            'Stimulus': 'Stim'
+
+        }
     }
 
     NetworksOfInterest = {
@@ -77,7 +86,19 @@ class LocalDataConstants():
         'overlap_ratio': 0.98,
         'window_length': 100,
         'trial_in_block': 10, # -> In Stim Locked Analyses
-        'min_trial': 20 # -> In PosNeg Locked Analyses
+        'min_trial': 20, # -> In PosNeg Locked Analyses
+
+        'Circuit':{
+
+            'ZeroPoint': 25,
+            'Fs': 250
+        },
+
+        'Univariate':{
+
+            'ZeroPoint': 100,
+            'Fs': 500
+        },
 
     }
 
