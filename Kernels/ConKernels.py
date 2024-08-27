@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.signal as signal
 
-import Utils.GC as GC
+from Utils import OrderedConnMeasures as OCM
 from npeet import entropy_estimators as ee
 from Utils.Constants import SpectralConstants as SC
 
@@ -16,8 +16,8 @@ def LRB_GC(x, y, specs):
     j = specs['j']
     est_order = int(specs['est_orders'][i, j])
 
-    uve = GC.LRB_univar_e(y, est_order)
-    mve = GC.LRB_mulvar_e(y, x, est_order)
+    uve = OCM.LRB_univar_e(y, est_order)
+    mve = OCM.LRB_mulvar_e(y, x, est_order)
 
     return np.log(uve / (mve + 0.000001))
 
@@ -66,15 +66,15 @@ def PIB_GC(x, y, specs):
     j = specs['j']
     order = int(specs['est_orders'][i, j])    
 
-    a_est_uni = GC.univar_AR_est(x, order)
+    a_est_uni = OCM.univar_AR_est(x, order)
 
     a_order = order
     b_order = a_order
 
-    a_est_mul, b_est_mul = GC.mulvar_AR_est(x, y, a_order, b_order)
+    a_est_mul, b_est_mul = OCM.mulvar_AR_est(x, y, a_order, b_order)
 
-    univar_error.append(GC.a_estimation_err(a_est_uni, x))
-    mulvar_error.append(GC.ab_estimation_err(a_est_mul, b_est_mul, x, y))
+    univar_error.append(OCM.a_estimation_err(a_est_uni, x))
+    mulvar_error.append(OCM.ab_estimation_err(a_est_mul, b_est_mul, x, y))
         
     GC_val.append(np.log(univar_error[-1] / mulvar_error[-1]))
     
@@ -87,8 +87,8 @@ def TE(x, y, specs):
     est_order = int(specs['est_orders'][i, j])
 
     Y_t = y[est_order:]
-    Y_lagged = GC.roll_mat_gen(y, est_order)
-    X_lagged = GC.roll_mat_gen(x, est_order)
+    Y_lagged = OCM.roll_mat_gen(y, est_order)
+    X_lagged = OCM.roll_mat_gen(x, est_order)
     
     return ee.cmi(Y_t, X_lagged, Y_lagged)
 

@@ -1,5 +1,5 @@
 import numpy as np
-from Utils import GC
+from Utils import OrderedConnMeasures as OCM
 
 from sklearn.linear_model import LinearRegression as LR
 
@@ -7,8 +7,8 @@ def LRB_GC(x, y, k):
 
     assert x.ndim == 1 and y.ndim == 1, "x and y must be a vector"
 
-    X_rm = GC.roll_mat_gen(x, k)
-    Y_rm = GC.roll_mat_gen(y, k)
+    X_rm = OCM.roll_mat_gen(x, k)
+    Y_rm = OCM.roll_mat_gen(y, k)
 
     XY = np.concatenate([X_rm.T, Y_rm.T]).T
 
