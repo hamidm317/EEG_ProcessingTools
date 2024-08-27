@@ -6,15 +6,16 @@ This Repository is active and alongside three other Repositories ([RL-and-MDD as
 
 The Covered (or Under Construction 😁) tools are listed below, I would appreciate if you could suggest me anything or criticize or use or check or ... my codes!
 
-## Univariate Studies (UC)
+## Univariate Studies
 
-Analysing ERP, Power, and Phase in each Frequency Band.
+A set of Simple tools is provided to extract phase and power of signals if specific Spectral Bands!
 
 ## Multivariate Studies
 
 ### Calculation of Connectivity
 
 - PLI (Phase Lag Index)
+  -  Also, dPLI and wPLI
 - Transfer Entropy
 - Granger Causality
 - PAC (Phase Amplitude Coupling) (UC)
