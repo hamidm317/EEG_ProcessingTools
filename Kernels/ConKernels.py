@@ -2,8 +2,10 @@ import numpy as np
 import scipy.signal as signal
 
 import Utils.GC as GC
-import Utils.TE as TE_U
 from npeet import entropy_estimators as ee
+from Utils.Constants import SpectralConstants as SC
+
+from Utils.SpectralDeco import WavletSpectralDecomposer as WSD
 
 def LRB_GC(x, y, specs):
 
@@ -14,13 +16,32 @@ def LRB_GC(x, y, specs):
     j = specs['j']
     est_order = int(specs['est_orders'][i, j])
 
-    uve = GC.LRB_univar_e(x, est_order)
-    mve = GC.LRB_mulvar_e(x, y, est_order)
+    uve = GC.LRB_univar_e(y, est_order)
+    mve = GC.LRB_mulvar_e(y, x, est_order)
 
-    return np.log(uve / mve)
+    return np.log(uve / (mve + 0.000001))
 
-def PLI(x, y, specs):
+def PLI(x, y, specs): # the PLI kernel could handle Band itself, but it is recommended not to use it, 
+    # give the band-filtered data to the kernel.
+
+    if 'Band' in specs.keys():
+
+        Band = specs['Band']
+
+    else:
+
+        Band = 'All'
+
+    if Band == 'All':
     
+        x_b = x
+        y_b = y
+
+    else:
+
+        x_b = WSD(x, Band = Band)[0]
+        y_b = WSD(x, Band = Band)[0]
+
     x_a = signal.hilbert(x)
     y_a = signal.hilbert(y)
     
@@ -61,28 +82,67 @@ def PIB_GC(x, y, specs):
 
 def TE(x, y, specs):
 
-    # x -> Source Signal
-    # y -> Target Signal
+    i = specs['i']
+    j = specs['j']
+    est_order = int(specs['est_orders'][i, j])
 
-    w_x = specs['w_x']
-    w_y = specs['w_y']
-
-    d_x = specs['d_x']
-    d_y = specs['d_y']
-    
-    X_lagged = TE_U.generate_lagged_vectors(x, w_x)
-    Y_lagged = TE_U.generate_lagged_vectors(y, w_y)
-
-    X_lagged = X_lagged[:-d_x-1]
-    Y_lagged = Y_lagged[:-d_y-1]
-
-    max_index = max(w_x + d_x , w_y + d_y)
-    if w_x + d_x == max_index:
-        Y_lagged = Y_lagged[max_index- w_y - d_y:]
-    else:         
-        X_lagged = X_lagged[max_index- w_x - d_x:]
-    
-
-    Y_t = y[max_index:]
+    Y_t = y[est_order:]
+    Y_lagged = GC.roll_mat_gen(y, est_order)
+    X_lagged = GC.roll_mat_gen(x, est_order)
     
     return ee.cmi(Y_t, X_lagged, Y_lagged)
+
+def dPLI(x, y, specs):
+
+    if 'Band' in specs.keys():
+
+        Band = specs['Band']
+
+    else:
+
+        Band = 'All'
+
+    if Band == 'All':
+    
+        x_b = x
+        y_b = y
+
+    else:
+
+        x_b = WSD(x, Band = Band)[0]
+        y_b = WSD(x, Band = Band)[0]
+
+    x_a = signal.hilbert(x)
+    y_a = signal.hilbert(y)
+    
+    phase_HSs = np.heaviside(np.angle(x_a) - np.angle(y_a))
+    
+    return np.mean(phase_HSs)
+
+def wPLI(x, y, specs, eta = 0.00000001):
+
+    if 'Band' in specs.keys():
+
+        Band = specs['Band']
+
+    else:
+
+        Band = 'All'
+
+    if Band == 'All':
+    
+        x_b = x
+        y_b = y
+
+    else:
+
+        x_b = WSD(x, Band = Band)[0]
+        y_b = WSD(x, Band = Band)[0]
+
+    x_a = signal.hilbert(x)
+    y_a = signal.hilbert(y)
+    
+    numerator = np.abs(np.mean(np.angle(x_a) - np.angle(y_a)))
+    denominator = np.mean(np.abs(np.angle(x_a) - np.angle(y_a)))
+    
+    return numerator / (denominator)
