@@ -10,6 +10,18 @@ class DC_Constants():
             'lagged': False
         },
 
+        'dPLI':{
+
+            'directed': True,
+            'lagged': False
+        },
+
+        'wPLI':{
+
+            'directed': True,
+            'lagged': False
+        },
+
         'LRB_GC':{
             
             'directed': True,
@@ -127,6 +139,36 @@ class SpectralConstants():
 
             'morl': {
 
+                '100': {
+
+                    'All': [8, 1024],
+                    'Delta': [128, 1024],
+                    'Theta': [54, 128],
+                    'Alpha': [32, 54],
+                    'Beta': [13, 32],
+                    'Gamma': [8, 14],
+                    'LowBeta': [20, 32],
+                    'HighBeta': [12, 20],
+                    'LowGamma': [11, 14],
+                    'MidGamma': [9.2, 11],
+                    'HighGamma': [8, 9.2],
+                },
+
+                '200': {
+
+                    'All': [8, 1024],
+                    'Delta': [128, 1024],
+                    'Theta': [54, 128],
+                    'Alpha': [32, 54],
+                    'Beta': [13, 32],
+                    'Gamma': [8, 14],
+                    'LowBeta': [20, 32],
+                    'HighBeta': [12, 20],
+                    'LowGamma': [11, 14],
+                    'MidGamma': [9.2, 11],
+                    'HighGamma': [8, 9.2],
+                },
+
                 '400': {
 
                     'All': [8, 1024],
@@ -163,6 +205,8 @@ class SpectralConstants():
 
         'time_lims':{
 
+            '100': [0, 0.2],
+            '200': [0, 0.4],
             '400': [-0.2, 0.6],
             '800': [-0.4, 1.2]
 
