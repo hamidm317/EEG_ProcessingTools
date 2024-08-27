@@ -19,13 +19,14 @@ def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ra
         'd_x': 10,
         'd_y': 10,
         'w_x': 1,
-        'w_y': 1
+        'w_y': 1,
+        'Band': 'All'
 
     }
 
     options.update(kwargs)
 
-    assert len(options) == 9, "Invalid Keyword"
+    # assert len(options) == 9, "Invalid Keyword"
 
     CoreKernelFunction, KernelProperties = AssignConnectivityFunction(kernel)
 
@@ -41,30 +42,13 @@ def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ra
     
     
     assert type(options['inc_channels']) == list or type(options['inc_channels']) == np.ndarray, "Included Channels must be a list or np array"
-    assert len(options['inc_channels']) > 1 and len(options['inc_channels']) <= Data.shape[-2], "At least two channels and at most number of channels of data must be chosen"
+    # assert len(options['inc_channels']) > 1 and len(options['inc_channels']) <= Data.shape[-2], "At least two channels and at most number of channels of data must be chosen"
 
     channels = options['inc_channels']
-    order_EF = False
-
-    if type(options['orders_matrix']) == int or type(options['orders_matrix']) == float:
-
-        order_EF = True
-        orders_mat = np.ones((len(channels), len(channels))) * options['orders_matrix']
-
-    else:
-
-        if type(options['orders_matrix']) == list or type(options['orders_matrix']) == np.ndarray:
-
-            order_EF = True
-            orders_mat = np.array(options['orders_matrix'])
-
-            assert orders_mat.ndim == 2 and orders_mat.shape[0] == orders_mat.shape[1] and orders_mat.shape[0] == len(channels), "Improper Orders Matrix dimensions!"
-
-    assert order_EF, "Invalid type of orders matrix"
 
     assert len(options['phase_freq']) == 2 and len(options['amp_freq']) == 2, "Phase and Amplitude Frequencies must be a list with length equal to 2"
 
-    specs = {'est_orders': orders_mat}
+    specs = {}
     specs['amp_freq'] = options['amp_freq']
     specs['phase_freq'] = options['phase_freq']
 
@@ -72,6 +56,7 @@ def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ra
     specs['d_y'] = options['d_y']
     specs['w_x'] = options['w_x']
     specs['w_y'] = options['w_y']
+    specs['Band'] = options['Band']
 
     assert Data.ndim == 2 or Data.ndim == 3, "Your Data must be 3 or 2 Dimensional, (Trials (optional), Channels, Time)"
 
@@ -81,11 +66,50 @@ def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ra
 
     
     time_length = Data.shape[-1]
-    number_of_channels = len(channels)
+    # number_of_channels = len(channels)
     number_of_windows = int((time_length - window_length) / ((1 - overlap_ratio) * window_length)) + 1
     number_of_trials = Data.shape[0]
 
-    DC_values = np.zeros((number_of_trials, number_of_windows, number_of_channels, number_of_channels))
+    DirFlag = KernelProperties['directed']
+
+    if len(channels) > 1 and np.all([type(electrode) in [int, np.int32] for electrode in channels]):
+
+        i_channels = channels
+        j_channels = channels
+
+    elif len(channels) == 2:
+
+        i_channels = channels[0]
+        j_channels = channels[1]
+
+        DirFlag = True
+
+    else:
+
+        assert False, "Invalid Channels matrix shape"  
+
+    
+    order_EF = False
+
+    if type(options['orders_matrix']) == int or type(options['orders_matrix']) == float:
+
+        order_EF = True
+        orders_mat = np.ones((len(i_channels), len(j_channels))) * options['orders_matrix']
+
+    else:
+
+        if type(options['orders_matrix']) == list or type(options['orders_matrix']) == np.ndarray:
+
+            order_EF = True
+            orders_mat = np.array(options['orders_matrix'])
+
+            assert orders_mat.ndim == 2 and orders_mat.shape[0] == len(i_channels) and orders_mat.shape[1] == len(j_channels), "Improper Orders Matrix dimensions!"
+
+    assert order_EF, "Invalid type of orders matrix"
+
+    specs['est_orders'] = orders_mat
+
+    DC_values = np.zeros((number_of_trials, number_of_windows, len(i_channels), len(j_channels)))
 
     for trial_i in range(number_of_trials):
 
@@ -94,11 +118,11 @@ def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ra
             # print("In Progress", win_step / number_of_windows * 100, "% ...")
             # it is not beautiful brother!
 
-            for i, channel_a in enumerate(channels):
+            for i, channel_a in enumerate(i_channels):
 
-                if KernelProperties['directed']:
+                if DirFlag:
 
-                    for j, channel_b in enumerate(channels):
+                    for j, channel_b in enumerate(j_channels):
 
                         win_stp = int((win_step) * (1 - overlap_ratio) * window_length)
                         win_enp = win_stp + window_length
@@ -115,7 +139,7 @@ def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ra
 
                 else:
 
-                    for j, channel_b in enumerate(channels[:i]):
+                    for j, channel_b in enumerate(j_channels[:i]):
 
                         win_stp = int((win_step) * (1 - overlap_ratio) * window_length)
                         win_enp = win_stp + window_length
