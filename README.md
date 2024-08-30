@@ -19,7 +19,7 @@ A set of Simple tools is provided to extract phase and power of signals if speci
 - Transfer Entropy
 - Granger Causality
 - PAC (Phase Amplitude Coupling) (UC)
-- PLV (Phase Lock Value) (UC)
+- PLV (Phase Lock Value)
 
 ### Network Studies (UC)
 
