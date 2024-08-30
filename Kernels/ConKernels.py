@@ -7,7 +7,7 @@ from Utils.Constants import SpectralConstants as SC
 
 from Utils.SpectralDeco import WavletSpectralDecomposer as WSD
 
-def LRB_GC(x, y, specs):
+def LRB_GC(x, y, specs, eta = 0.000001):
 
     # y -> Source Signal
     # x -> Target Signal    
@@ -19,7 +19,7 @@ def LRB_GC(x, y, specs):
     uve = OCM.LRB_univar_e(y, est_order)
     mve = OCM.LRB_mulvar_e(y, x, est_order)
 
-    return np.log(uve / (mve + 0.000001))
+    return np.log(uve / (mve + eta))
 
 def PLI(x, y, specs): # the PLI kernel could handle Band itself, but it is recommended not to use it, 
     # give the band-filtered data to the kernel.
@@ -48,6 +48,34 @@ def PLI(x, y, specs): # the PLI kernel could handle Band itself, but it is recom
     phase_signs = np.sign(np.angle(x_a) - np.angle(y_a))
     
     return np.abs(np.mean(phase_signs))
+
+def PLV(x, y, specs): # the PLI kernel could handle Band itself, but it is recommended not to use it, 
+    # give the band-filtered data to the kernel.
+
+    if 'Band' in specs.keys():
+
+        Band = specs['Band']
+
+    else:
+
+        Band = 'All'
+
+    if Band == 'All':
+    
+        x_b = x
+        y_b = y
+
+    else:
+
+        x_b = WSD(x, Band = Band)[0]
+        y_b = WSD(x, Band = Band)[0]
+
+    x_a = signal.hilbert(x)
+    y_a = signal.hilbert(y)
+    
+    phase_exps = np.exp(1j * (np.angle(x_a) - np.angle(y_a)))
+    
+    return np.abs(np.mean(phase_exps))
 
 def PLI_Comp(x, y, specs):
     
@@ -115,7 +143,7 @@ def dPLI(x, y, specs):
     x_a = signal.hilbert(x)
     y_a = signal.hilbert(y)
     
-    phase_HSs = np.heaviside(np.angle(x_a) - np.angle(y_a))
+    phase_HSs = np.heaviside(np.angle(x_a) - np.angle(y_a), 0)
     
     return np.mean(phase_HSs)
 
