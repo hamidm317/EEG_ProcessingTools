@@ -17,8 +17,7 @@ from Utils import SciPlot as SP
 group_labels = Constants.LocalDataConstants.Labels['groups']
 data_labels = Constants.LocalDataConstants.Labels['data_block']
 
-# ConKers = [kernel for kernel in Constants.DC_Constants.Properties.keys()]
-ConKers = ['LRB_GC']
+ConKers = [kernel for kernel in Constants.DC_Constants.Properties.keys()]
 
 trial_in_block = Constants.LocalDataConstants.DefaulValues['trial_in_block']
 overlap_ratio = Constants.LocalDataConstants.DefaulValues['overlap_ratio']
