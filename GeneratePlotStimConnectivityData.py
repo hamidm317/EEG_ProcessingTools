@@ -17,7 +17,8 @@ from Utils import SciPlot as SP
 group_labels = Constants.LocalDataConstants.Labels['groups']
 data_labels = Constants.LocalDataConstants.Labels['data_block']
 
-ConKers = [kernel for kernel in Constants.DC_Constants.Properties.keys()]
+# ConKers = [kernel for kernel in Constants.DC_Constants.Properties.keys()]
+ConKers = ['LRB_GC']
 
 trial_in_block = Constants.LocalDataConstants.DefaulValues['trial_in_block']
 overlap_ratio = Constants.LocalDataConstants.DefaulValues['overlap_ratio']
@@ -78,14 +79,14 @@ event_numbers = [3] # Stim Onset
 
 for event in event_numbers:
 
-    raw_data, data_lengths = Local.ClusteredEEGLoader(event_number = event)
+    raw_data, data_lengths = Local.ClusteredEEGLoader(event = event)
     
     event_name = Constants.LocalDataConstants.names['events'][event]
     print("The Event is " + event_name)
 
-    ConDataDict[event_name] = {}
-
     for kernel in ConKers:
+
+        ConDataDict[event_name][kernel] = {}
 
         if kernel in ConDataDict[event_name].keys():
 
@@ -230,10 +231,14 @@ for kernel in ConKers:
                         fig.suptitle("Temporal dynamic of " + str(kernel) + " locked on " + event_name + " Onset\nTransmitter is " + Constants.LocalDataConstants.names['JulyClusterNames'][Channel_a] + " and Receiver is " + Constants.LocalDataConstants.names['JulyClusterNames'][Channel_b], fontsize = 15)
                         fig.savefig(PlotSave_dir + "\\" + kernel + "\\" + Network + "\\" + event_name + "\defParam_Tr_" + Constants.LocalDataConstants.names['JulyClusterNames'][Channel_a] + "_Rec_" + Constants.LocalDataConstants.names['JulyClusterNames'][Channel_b] + ".png", format="png")
 
+                        print("Saved")
+
                     elif kernel == 'LRB_GC':
 
                         fig.suptitle("Temporal dynamic of " + str(kernel) + " locked on " + event_name + " Onset\nTransmitter is " + Constants.LocalDataConstants.names['JulyClusterNames'][Channel_b] + " and Receiver is " + Constants.LocalDataConstants.names['JulyClusterNames'][Channel_a], fontsize = 15)
                         fig.savefig(PlotSave_dir + "\\" + kernel + "\\" + Network + "\\" + event_name + "\defParam_Tr_" + Constants.LocalDataConstants.names['JulyClusterNames'][Channel_b] + "_Rec_" + Constants.LocalDataConstants.names['JulyClusterNames'][Channel_a] + ".png", format="png")
+
+                        print("Saved")
                     
                     plt.close(fig)  
                     # plt.show()              
