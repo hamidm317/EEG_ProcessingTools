@@ -7,46 +7,60 @@ class DC_Constants():
         'PLI':{
 
             'directed': False,
-            'lagged': False
+            'lagged': False,
+            'AvailableBands': ['All']
+        },
+
+        'PLV':{
+
+            'directed': False,
+            'lagged': False,
+            'AvailableBands': ['All']
         },
 
         'dPLI':{
 
             'directed': True,
-            'lagged': False
+            'lagged': False,
+            'AvailableBands': ['All']
         },
 
         'wPLI':{
 
             'directed': True,
-            'lagged': False
+            'lagged': False,
+            'AvailableBands': ['All']
         },
 
         'LRB_GC':{
             
             'directed': True,
-            'lagged': True
+            'lagged': True,
+            'AvailableBands': ['All']
 
         },
 
-        'PIB_GC':{
+        # 'PIB_GC':{
             
-            'directed': True,
-            'lagged': True
+        #     'directed': True,
+        #     'lagged': True,
+            # 'AvailableBands': ['All']
 
-        },
+        # },
 
-        'PAC':{
+        # 'PAC':{
             
-            'directed': True,
-            'lagged': False
+        #     'directed': True,
+        #     'lagged': False,
+            # 'AvailableBands': ['All']
 
-        },
+        # },
 
         'TE':{
             
             'directed': True,
-            'lagged': True
+            'lagged': True,
+            'AvailableBands': ['All']
 
         }
     }
@@ -60,6 +74,7 @@ class LocalDataConstants():
         'perform_data_dir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\Subjects_Behavioral_datas.csv',
         'eeg_prep_datasets_dir': r'E:\\HWs\Msc\\Research\\Research\\Depression Dataset\\Testing Preprocess',
         'confile_dir': r'D:\AIRLab_Research\Data\ConnectivityDataDict.pickle',
+        'n_confile_dir': r'D:\AIRLab_Research\Data',
         'plotSave_dir': r'D:\AIRLab_Research\Plots',
         'fd_excel_dir': r'D:\AIRLab_Research\Features\FeatureDraft.xlsx'
     }
@@ -67,7 +82,7 @@ class LocalDataConstants():
     names = {
 
         'JulyClusterNames': ['PF', 'LF', 'RF', 'MFC', 'LT', 'RT', 'LFC', 'RFC', 'MPC', 'LPC', 'RPC', 'MP', 'LPO', 'RPO'],
-        'freq_bands': ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'],
+        'freq_bands': ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma', 'LowBeta', 'HighBeta', 'LowGamma', 'MidGamma', 'HighGamma', 'All'],
         'events': ['All', 'Neg', 'Pos', 'Stim'],
         'LocalCM':{
 
