@@ -27,7 +27,7 @@ def ClusteredEEGLoader(event):
 
         else:
 
-            assert event > 0 and event < len(LocalDataConstants.names['events']), "The Event is not available"
+            assert event >= 0 and event < len(LocalDataConstants.names['events']), "The Event is not available"
             
             event_number = event
 
@@ -66,27 +66,9 @@ def ExperimentDataLoader():
 
 def AvailableSubjects():
 
-    BehavioralData, tmp = ExperimentDataLoader()
+    SOI = np.load(LocalDataConstants.directories['ListOfAvailableSubjects'])
 
-    import os
-
-    subjects = []
-
-    for path in os.listdir(LocalDataConstants.directories['eeg_prep_datasets_dir']):
-
-        subjects.append(path)
-
-    subjects_of_interest = []  
-    available_IDs = []                      
-                
-    for i in range(len(subjects)):
-
-        idx = np.where((BehavioralData['id'][:]) == int(subjects[i]))[0][0]
-        subjects_of_interest.append(idx)
-
-        available_IDs.append(BehavioralData['id'][idx])
-
-    return np.array(subjects_of_interest), available_IDs
+    return SOI
 
 def HandleDir(Directory):
 
@@ -147,7 +129,7 @@ def HandleDataLoad(Dir, version_number = None):
     if version_number is None:
 
         VersionHistoryDF = read_csv(Dir + "\\VersionHistory.csv", index_col = 0)
-        version_number = np.array(VersionHistoryDF['VersionNumber'])[0]
+        version_number = np.array(VersionHistoryDF['VersionNumber'])[-1]
 
     LoadFileDir = Dir + "\\Data_Version" + str(version_number)
 
