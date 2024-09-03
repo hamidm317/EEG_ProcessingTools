@@ -13,14 +13,15 @@ group_labels = Constants.LocalDataConstants.Labels['groups']
 data_labels = Constants.LocalDataConstants.Labels['data_block']
 
 # ConKers = [kernel for kernel in Constants.DC_Constants.Properties.keys()]
-ConKers = ['PLV']
+ConKers = ['PLI', 'TE', 'dPLI', 'wPLI']
 
 overlap_ratio = Constants.LocalDataConstants.DefaulValues['overlap_ratio']
 win_length = Constants.LocalDataConstants.DefaulValues['window_length']
 
 confile_dir = Constants.LocalDataConstants.directories['n_confile_dir']
 
-NOIs = [Network for Network in Constants.LocalDataConstants.NetworksOfInterest.keys()] # Networks Of Interest!
+# NOIs = [Network for Network in Constants.LocalDataConstants.NetworksOfInterest.keys()][1:] # Networks Of Interest!
+NOIs = ['ZeroAxis', 'Frontal', 'OcciTemporal']
 Bands = Constants.LocalDataConstants.names['freq_bands']
 
 Fs = 500
@@ -54,7 +55,7 @@ for i, sub_i in enumerate(SOI[0]):
 
 ########################################################## Generate Connectivity Data ###########################################################
 
-event_numbers = [3] # Stim Onset
+event_numbers = [0] # Stim Onset
 
 specs = {
 
