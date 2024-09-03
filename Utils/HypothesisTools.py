@@ -82,11 +82,14 @@ def HandleWin(window_str):
 
     return [int(win) for win in wins]
 
-def HandleClusterStr(Clusters_str):
+def HandleClusterStr(Clusters_str, Network):
 
     Clusters_inv = []
 
     ActClusters = LDC.names['JulyClusterNames']
+
+    NOI = LDC.NetworksOfInterest[Network]
+    ActClusters = [ActClusters[NOI_mem] for NOI_mem in NOI]
 
     for Cluster_str in Clusters_str:
 
@@ -114,31 +117,17 @@ def HandleHypo(Hypothesis):
 
         return ALTs[1]
     
-def HandleNetworkData(ConDataDict, EVENT, ORIGIN, SUBORIGIN, SOI, Subs, Channels, Band):
-
-    SUBORIGIN_H = LDC.names['LocalCM'][SUBORIGIN]
+def HandleNetworkData(ConDataDict, EVENT, SOI, Subs, Channels):
 
     if EVENT == 'Stim': # For TE the first Channel is Transmitter and the other one the Receiver? and How About LRB_GC?
 
-        if SUBORIGIN_H in ['LRB_GC']:
-
-            NetworkData = [[[ConDataDict[EVENT][SUBORIGIN_H]['WL100']['OR98'][str(Subs[1][SOI[G_i][i][0]])][block, :, Channels[1], Channels[0]] for block in range(2)] for i in range(len(SOI[G_i]))] for G_i in range(len(SOI))]
-
-        else:
-
-            NetworkData = [[[ConDataDict[EVENT][SUBORIGIN_H]['WL100']['OR98'][str(Subs[1][SOI[G_i][i][0]])][block, :, Channels[0], Channels[1]] for block in range(2)] for i in range(len(SOI[G_i]))] for G_i in range(len(SOI))]
+        NetworkData = [[[ConDataDict[str(Subs[1][SOI[G_i][i][0]])][block, :, Channels[0], Channels[1]] for block in range(2)] for i in range(len(SOI[G_i]))] for G_i in range(len(SOI))]
 
     elif EVENT == 'PosNeg':
 
         events = ['Pos', 'Neg']
 
-        if SUBORIGIN_H in ['LRB_GC']:
-
-            NetworkData = [[[ConDataDict[event][SUBORIGIN_H]['WL100']['OR98'][str(Subs[1][SOI[G_i][i][0]])][:, Channels[1], Channels[0]] for event in events] for i in range(len(SOI[G_i]))] for G_i in range(len(SOI))]
-
-        else:
-
-            NetworkData = [[[ConDataDict[event][SUBORIGIN_H]['WL100']['OR98'][str(Subs[1][SOI[G_i][i][0]])][:, Channels[0], Channels[1]] for event in events] for i in range(len(SOI[G_i]))] for G_i in range(len(SOI))]
+        NetworkData = [[[ConDataDict[event][str(Subs[1][SOI[G_i][i][0]])][:, Channels[0], Channels[1]] for event in events] for i in range(len(SOI[G_i]))] for G_i in range(len(SOI))]
 
     return NetworkData
 

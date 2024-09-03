@@ -76,6 +76,7 @@ class LocalDataConstants():
         'confile_dir': r'D:\AIRLab_Research\Data\ConnectivityDataDict.pickle',
         'n_confile_dir': r'D:\AIRLab_Research\Data',
         'plotSave_dir': r'D:\AIRLab_Research\Plots',
+        'ListOfAvailableSubjects': r'D:\AIRLab_Research\Data\BehavioralData\AvailableSubjects.npy',
         'fd_excel_dir': r'D:\AIRLab_Research\Features\FeatureDraft.xlsx'
     }
 
@@ -89,13 +90,23 @@ class LocalDataConstants():
             'Transfer Entropy': 'TE',
             'PLI': 'PLI',
             'Granger Causality': 'LRB_GC',
-            'Stimulus': 'Stim'
+            'dPLI': 'dPLI',
+            'wPLI': 'wPLI',
+            'PLV': 'PLV',
+
+            'Stimulus': 'Stim',
+            'Stim': 'Stim',
+            'PosNeg': 'PosNeg',
+            'Feedback': 'All',
+            'Action': 'Action',
+
 
         }
     }
 
     NetworksOfInterest = {
 
+        'All': np.arange(14),
         'ZeroAxis': [0, 3, 8, 11],
         'Frontal': [0, 1, 2, 3],
         'OcciTemporal': [4, 5, 12, 13]
