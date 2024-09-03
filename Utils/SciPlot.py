@@ -75,7 +75,7 @@ def PhaseDecomp(Data: np.ndarray, NumBlock: int, NumSample_inBlock: int, Samplin
     
     return np.mean(Data[SamplesInBlocks], axis = 1)
 
-def ConfidenceBoundsGen(Data, Confidence_Level = 0.98):
+def ConfidenceBoundsGen(Data, Confidence_Level = 1.96):
 
     assert Data.ndim < 3 and Data.ndim > 0, "Data must be vector or 2 way matrix"
 
@@ -101,8 +101,8 @@ def ConfidenceBoundsGen(Data, Confidence_Level = 0.98):
     
 def ConfidenceBound(Data, Confidence_Level):
 
-    UB_CI = np.mean(Data) + Confidence_Level * np.std(Data)
-    LB_CI = np.mean(Data) - Confidence_Level * np.std(Data)
+    UB_CI = np.mean(Data) + Confidence_Level * np.std(Data) / np.sqrt(len(Data))
+    LB_CI = np.mean(Data) - Confidence_Level * np.std(Data) / np.sqrt(len(Data))
 
     return UB_CI, LB_CI
 
