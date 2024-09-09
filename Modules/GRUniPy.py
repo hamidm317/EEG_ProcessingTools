@@ -34,7 +34,7 @@ def FrequencyBandExt(Data: np.ndarray, Band = 'All'): # add kwargs and method
 
         if Band == 'All':
 
-            Band = [Band_i for Band_i in Constants.SpectralConstants.BandsBounds.keys()][:-1]
+            Band = [Band_i for Band_i in Constants.SpectralConstants.BandsBounds.keys()][:5]
 
         else:
 

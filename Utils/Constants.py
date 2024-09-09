@@ -8,7 +8,7 @@ class DC_Constants():
 
             'directed': False,
             'lagged': False,
-            'AvailableBands': ['All']
+            'AvailableBands': ['All', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']
         },
 
         'PLV':{
@@ -22,7 +22,7 @@ class DC_Constants():
 
             'directed': True,
             'lagged': False,
-            'AvailableBands': ['All']
+            'AvailableBands': ['All', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']
         },
 
         'wPLI':{
@@ -99,6 +99,7 @@ class LocalDataConstants():
             'PosNeg': 'PosNeg',
             'Feedback': 'All',
             'Action': 'Action',
+            'All': 'All'
 
 
         }
