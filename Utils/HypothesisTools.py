@@ -119,7 +119,7 @@ def HandleHypo(Hypothesis):
     
 def HandleNetworkData(ConDataDict, EVENT, SOI, Subs, Channels):
 
-    if EVENT == 'Stim': # For TE the first Channel is Transmitter and the other one the Receiver? and How About LRB_GC?
+    if EVENT == 'Stim' or EVENT == 'All': # For TE the first Channel is Transmitter and the other one the Receiver? and How About LRB_GC?
 
         NetworkData = [[[ConDataDict[str(Subs[1][SOI[G_i][i][0]])][block, :, Channels[0], Channels[1]] for block in range(2)] for i in range(len(SOI[G_i]))] for G_i in range(len(SOI))]
 

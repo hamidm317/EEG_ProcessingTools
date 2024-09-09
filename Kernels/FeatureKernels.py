@@ -379,3 +379,91 @@ def Univariate_Phase_PosNeg(Data, data_lengths, SOI, Channel, Band, specs = {'Nu
         BandDecompAmp = [[[np.squeeze(GRU.PowerPhaseExt(GRU.FrequencyBandExt(Data_ERP[G_i][sub_i][Mode], Band = Band), return_value = 'Phase')) for Mode in range(len(Data))] for sub_i in range(len(SOI[G_i]))] for G_i in range(len(SOI))]
 
         return BandDecompAmp
+    
+def Univariate_ERP_All(Data, data_lengths, SOI, Channel, Band, specs = {'NumBlock': 2, 'NumSample_inBlock': 10, 'StartPoint': 100, 'FinalPoint': 500}):
+    
+    import scipy.stats as sps
+    from Utils import SciPlot as SP
+
+    NB = specs['NumBlock']
+    NSiB = specs['NumSample_inBlock']
+
+    sp = specs['StartPoint']
+    fp = specs['FinalPoint']
+
+    Data_ERP = [[np.mean(sps.zscore(Data[sub_i[0]][SP.DeterminedBlockSampling(Length = int(data_lengths[sub_i[0]]), NumBlock = NB, NumSample_inBlock = NSiB), Channel, :], axis = -1), axis = 1)[:, sp : fp] for sub_i in SOI[G_i]] for G_i in range(len(SOI))]
+
+    if Band == 'All':
+
+        return Data_ERP
+    
+    else:
+
+        from Utils.Constants import SpectralConstants as SC
+        from Modules import GRUniPy as GRU
+
+        assert Band in SC.BandsBounds.keys(), "Band is not DEFINED!"
+
+        BandDecompERP = [[[np.squeeze(GRU.FrequencyBandExt(Data_ERP[G_i][sub_i][Trial], Band = Band)) for Trial in range(NB)] for sub_i in range(len(SOI[G_i]))] for G_i in range(len(SOI))]
+
+        return BandDecompERP
+    
+def Univariate_Power_All(Data, data_lengths, SOI, Channel, Band, specs = {'NumBlock': 2, 'NumSample_inBlock': 10, 'StartPoint': 100, 'FinalPoint': 500}):
+    
+    import scipy.stats as sps
+    from Utils import SciPlot as SP
+    from Modules import GRUniPy as GRU
+
+    NB = specs['NumBlock']
+    NSiB = specs['NumSample_inBlock']
+
+    sp = specs['StartPoint']
+    fp = specs['FinalPoint']
+
+    if Band == 'All':
+
+        Data_Amp = [[np.squeeze(GRU.PowerPhaseExt(np.mean(sps.zscore(Data[sub_i[0]][SP.DeterminedBlockSampling(Length = int(data_lengths[sub_i[0]]), NumBlock = NB, NumSample_inBlock = NSiB), Channel, :], axis = -1), axis = 1)[:, sp : fp], return_value = 'Power')) for sub_i in SOI[G_i]] for G_i in range(len(SOI))]
+
+        return Data_Amp
+    
+    else:
+
+        from Utils.Constants import SpectralConstants as SC
+
+        assert Band in SC.BandsBounds.keys(), "Band is not DEFINED!"
+
+        Data_ERP = [[np.mean(sps.zscore(Data[sub_i[0]][SP.DeterminedBlockSampling(Length = int(data_lengths[sub_i[0]]), NumBlock = NB, NumSample_inBlock = NSiB), Channel, :], axis = -1), axis = 1)[:, sp : fp] for sub_i in SOI[G_i]] for G_i in range(len(SOI))]
+        
+        BandDecompAmp = [[[np.squeeze(GRU.PowerPhaseExt(GRU.FrequencyBandExt(Data_ERP[G_i][sub_i][Trial], Band = Band), return_value = 'Power')) for Trial in range(NB)] for sub_i in range(len(SOI[G_i]))] for G_i in range(len(SOI))]
+
+        return BandDecompAmp
+    
+def Univariate_Phase_All(Data, data_lengths, SOI, Channel, Band, specs = {'NumBlock': 2, 'NumSample_inBlock': 10, 'StartPoint': 100, 'FinalPoint': 500}):
+    
+    import scipy.stats as sps
+    from Utils import SciPlot as SP
+    from Modules import GRUniPy as GRU
+
+    NB = specs['NumBlock']
+    NSiB = specs['NumSample_inBlock']
+
+    sp = specs['StartPoint']
+    fp = specs['FinalPoint']
+
+    if Band == 'All':
+
+        Data_Amp = [[np.squeeze(GRU.PowerPhaseExt(np.mean(sps.zscore(Data[sub_i[0]][SP.DeterminedBlockSampling(Length = int(data_lengths[sub_i[0]]), NumBlock = NB, NumSample_inBlock = NSiB), Channel, :], axis = -1), axis = 1)[:, sp : fp], return_value = 'Phase')) for sub_i in SOI[G_i]] for G_i in range(len(SOI))]
+
+        return Data_Amp
+    
+    else:
+
+        from Utils.Constants import SpectralConstants as SC
+
+        assert Band in SC.BandsBounds.keys(), "Band is not DEFINED!"
+
+        Data_ERP = [[np.mean(sps.zscore(Data[sub_i[0]][SP.DeterminedBlockSampling(Length = int(data_lengths[sub_i[0]]), NumBlock = NB, NumSample_inBlock = NSiB), Channel, :], axis = -1), axis = 1)[:, sp : fp] for sub_i in SOI[G_i]] for G_i in range(len(SOI))]
+        
+        BandDecompAmp = [[[np.squeeze(GRU.PowerPhaseExt(GRU.FrequencyBandExt(Data_ERP[G_i][sub_i][Trial], Band = Band), return_value = 'Phase')) for Trial in range(NB)] for sub_i in range(len(SOI[G_i]))] for G_i in range(len(SOI))]
+
+        return BandDecompAmp
