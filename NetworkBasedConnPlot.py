@@ -23,7 +23,8 @@ PlotSave_dir = Constants.LocalDataConstants.directories['plotSave_dir']
 
 # NOIs = [Network for Network in Constants.LocalDataConstants.NetworksOfInterest.keys()] # Networks Of Interest!
 NOIs = ['ZeroAxis', 'Frontal', 'OcciTemporal']
-Bands = Constants.LocalDataConstants.names['freq_bands']
+# Bands = Constants.LocalDataConstants.names['freq_bands']
+Bands = ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']
 
 Fs = 500
 
@@ -56,7 +57,7 @@ for i, sub_i in enumerate(SOI[0]):
 
 ########################################################## Generate Connectivity Data ###########################################################
 
-event_numbers = [0] # Stim Onset
+event_numbers = [0, 3]
 
 time_p = np.linspace(st + win_length / (Fs * 2), ft - win_length / (Fs * 2), int(np.ceil(((ft - st) * Fs - win_length) / (win_length * (1- overlap_ratio)))))
 
