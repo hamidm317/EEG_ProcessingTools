@@ -21,6 +21,6 @@ A set of Simple tools is provided to extract phase and power of signals if speci
 - PAC (Phase Amplitude Coupling) (UC)
 - PLV (Phase Lock Value)
 
-### Network Studies (UC)
+### Network Studies
 
-This is part is a huge "FUTURE WORK" and its progress relies on the coming occurences :)
+Network Studies are implemented in an indpendent [Repository](https://github.com/hamidm317/SeCuNetworkToolBox)
