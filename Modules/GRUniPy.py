@@ -2,13 +2,19 @@ import numpy as np
 from scipy import signal
 
 from Utils import Constants
-from Utils import SpectralDeco as SD
+from Kernels import SpectralDecompKernels as SD
 
 def PowerPhaseExt(x: np.ndarray, return_value = 'All'):
 
     output = []
 
-    x_a = signal.hilbert(x, axis = -1)
+    if x.dtype in ['complex128']:
+
+        x_a = x
+
+    else:
+
+        x_a = signal.hilbert(x, axis = -1)
 
     if return_value == 'All':
 
