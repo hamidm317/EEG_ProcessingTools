@@ -36,7 +36,7 @@ def roll_mat_gen(x, k):
 
     N = len(x)
 
-    for i in range(N - k):
+    for i in range(N - k + 1):
 
         X_rm.append(x[i : i + k])
 
