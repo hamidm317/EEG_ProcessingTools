@@ -4,8 +4,12 @@ import scipy.signal as signal
 from Utils import OrderedConnMeasures as OCM
 from npeet import entropy_estimators as ee
 from Utils.Constants import SpectralConstants as SC
+from Utils.Constants import LocalDataConstants as LDC
 
-from Utils.SpectralDeco import WavletSpectralDecomposer as WSD
+from Kernels.SpectralDecompKernels import WavletSpectralDecomposer as WSD
+from Kernels import SpectralDecompKernels
+from Kernels import CorrKernels
+from Modules import GRUniPy as GRU
 
 def LRB_GC(x, y, specs, eta = 0.000001):
 
@@ -174,3 +178,30 @@ def wPLI(x, y, specs, eta = 0.00000001):
     denominator = np.mean(np.abs(np.angle(x_a) - np.angle(y_a)))
     
     return numerator / (denominator)
+
+def PAC(x, y, specs):
+
+    # x -> Consider X as Amplitude Signal
+    # y -> Consider Y as Phase Signal
+
+    x = x / np.sqrt(np.var(x))
+    y = y / np.sqrt(np.var(y))
+
+    AmpBand = specs['AmpBand']
+    PhaseBand = specs['PhaseBand']
+
+    SpecDecompMethod = specs['SpecDecompKernel']
+    PhaAmpCorrMethod = specs['PhaseAmplitudeCorrelateCalc']
+
+    SpecDecomp_Kernel = getattr(SpectralDecompKernels, LDC.names['LocalCM'][SpecDecompMethod])
+    PACorr_Kernel = getattr(CorrKernels, PhaAmpCorrMethod)
+
+    X_Filtered = SpecDecomp_Kernel(data = x, Band = AmpBand)
+    Y_Filtered = SpecDecomp_Kernel(data = y, Band = PhaseBand)
+
+    AmpSignal = GRU.PowerPhaseExt(np.mean(X_Filtered[0], axis = 0), return_value = 'Power')[0]
+    PhaSignal = GRU.PowerPhaseExt(np.mean(Y_Filtered[0], axis = 0), return_value = 'Phase')[0]
+
+    PAC_Value = PACorr_Kernel(AmpSig = AmpSignal, PhaSig = PhaSignal)
+
+    return PAC_Value
