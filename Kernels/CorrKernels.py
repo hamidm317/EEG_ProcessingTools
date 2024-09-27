@@ -16,7 +16,7 @@ def MeanVectorLength(AmpSig, PhaSig):
 
     return MVL
 
-def ModulationIndex(AmpSig, PhaSig, NumberOfBins = None, DistanceFunction = 'ShannonEntropy', HypoTestLoopLength = None):
+def ModulationIndex(AmpSig, PhaSig, NumberOfBins = None, DistanceFunction = 'KullbackLeibler', HypoTestLoopLength = None):
 
     assert len(AmpSig) == len(PhaSig), "Signal must have same lengths"
 
