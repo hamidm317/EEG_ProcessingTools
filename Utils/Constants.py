@@ -65,6 +65,27 @@ class DC_Constants():
         }
     }
 
+class KernelConstants():
+
+    DistanceKernels = {
+
+        'KullbackLeibler': {
+
+            'Directed': True,
+            'Deterministic': False,
+            'HypoTestLoopLength': 1,
+
+        },
+
+        'ShannonEntropy': {
+
+            'Directed': False,
+            'Deterministic': True,
+            'HypoTestLoopLength': 1,
+
+        }
+    }
+
 class LocalDataConstants():
 
     directories = {
@@ -99,7 +120,11 @@ class LocalDataConstants():
             'PosNeg': 'PosNeg',
             'Feedback': 'All',
             'Action': 'Action',
-            'All': 'All'
+            'All': 'All',
+
+            'Wavelet': 'WavletSpectralDecomposer',
+            'WavletSpectralDecomposer': 'WavletSpectralDecomposer',
+            'RidRihaczek': 'RidRihaczek',
 
 
         }
@@ -121,6 +146,8 @@ class LocalDataConstants():
     }
 
     DefaulValues = {
+
+        'Fs': 500,
 
         'overlap_ratio': 0.98,
         'window_length': 100,
