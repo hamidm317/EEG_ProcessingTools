@@ -6,20 +6,15 @@ from kneed import KneeLocator
 def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ratio = 0.98, kernel = 'PLI', **kwargs):
 
     # Issues:
-    # # It must be possible to choose two groups of channel in directed connectivities!
-    # # How to handle spectral decomposed data?
 
     options = {
 
         'inc_channels': np.arange(Data.shape[-2]),
         'orders_matrix': None,
-        'phase_freq': [4, 8],
-        'amp_freq': [36, 42],
-        'PAC_DecompMethod': 'wavelet',
-        'd_x': 10,
-        'd_y': 10,
-        'w_x': 1,
-        'w_y': 1,
+        'PhaseBand': 'Theta',
+        'AmpBand': 'Gamma',
+        'SpecDecompKernel': 'Wavelet',
+        'PhaseAmplitudeCorrelateCalc': 'MeanVectorLength',
         'Band': 'All'
 
     }
@@ -46,16 +41,15 @@ def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ra
 
     channels = options['inc_channels']
 
-    assert len(options['phase_freq']) == 2 and len(options['amp_freq']) == 2, "Phase and Amplitude Frequencies must be a list with length equal to 2"
+    # assert len(options['PhaseBand']) == 2 and len(options['AmpBand']) == 2, "Phase and Amplitude Frequencies must be a list with length equal to 2"
 
     specs = {}
-    specs['amp_freq'] = options['amp_freq']
-    specs['phase_freq'] = options['phase_freq']
-
-    specs['d_x'] = options['d_x']
-    specs['d_y'] = options['d_y']
-    specs['w_x'] = options['w_x']
-    specs['w_y'] = options['w_y']
+    specs['PhaseBand'] = options['PhaseBand']
+    specs['AmpBand'] = options['AmpBand']
+    
+    specs['SpecDecompKernel'] = options['SpecDecompKernel']
+    specs['PhaseAmplitudeCorrelateCalc'] = options['PhaseAmplitudeCorrelateCalc']
+    
     specs['Band'] = options['Band']
 
     assert Data.ndim == 2 or Data.ndim == 3, "Your Data must be 3 or 2 Dimensional, (Trials (optional), Channels, Time)"
