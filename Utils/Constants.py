@@ -48,13 +48,13 @@ class DC_Constants():
 
         # },
 
-        # 'PAC':{
+        'PAC':{
             
-        #     'directed': True,
-        #     'lagged': False,
-            # 'AvailableBands': ['All']
+            'directed': True,
+            'lagged': False,
+            'AvailableBands': ['All']
 
-        # },
+        },
 
         'TE':{
             
