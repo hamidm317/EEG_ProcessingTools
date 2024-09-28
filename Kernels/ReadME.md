@@ -36,3 +36,25 @@ Up to now, there are two different implemented method to extract signal, includi
 also two different implemented similarity metrics,
 - Mean Vector Length (References will be here)
 - and Modulation Index
+
+Test Results of PAC are figured below. (Synthesized Data Are Generated Using the [EEG Simulation Repository](https://github.com/hamidm317/BrainElectroSignalsSim))
+
+![PAC in Source Level using MVL Kernel](https://github.com/hamidm317/EEG_ProcessingTools/blob/main/images/PAC_All2All_SourceLevelMVL_R01.png)
+
+
+Below figure is generated Using Kullback Leibler Divergence as Distance Metric.
+
+
+![PAC in Source Level using MI Kernel](https://github.com/hamidm317/EEG_ProcessingTools/blob/main/images/PAC_All2All_SourceLevelMI_R01.png)
+
+
+Above Plots figures the Source Level means that signals are High SNR, but below there are Sensor Level Plots, with less SNR.
+
+
+![PAC in Sensor Level using MVL Kernel](https://github.com/hamidm317/EEG_ProcessingTools/blob/main/images/PAC_All2All_SensorLevelMVL_R01.png)
+
+
+Below figure is generated Using Kullback Leibler Divergence as Distance Metric.
+
+
+![PAC in Sensor Level using MI Kernel](https://github.com/hamidm317/EEG_ProcessingTools/blob/main/images/PAC_All2All_SensorLevelMI_R01.png)
