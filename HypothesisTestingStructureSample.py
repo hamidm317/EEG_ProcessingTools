@@ -11,7 +11,7 @@ import scipy.stats as sps
 from Utils import SciPlot as SP
 
 from Kernels import FeatureKernels
-from Utils import HypothesisTools as HT
+from Utils import HypoExcelTools as HT
 
 import pandas as pd
 import pickle
