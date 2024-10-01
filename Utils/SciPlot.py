@@ -1,4 +1,5 @@
 import numpy as np
+from Utils.Constants import LocalDataConstants as LDC
 
 def MovMean(A, k):
 
@@ -125,3 +126,28 @@ def AestDim(Q, thr = 3):
     else:
         
         return AestDim(Q + 1)
+    
+def TimeVectorGenerator(st, ft, Fs, win_length, overlap_ratio, TimePos = 'Middle'):
+
+    assert TimePos in LDC.DefaulValues['AvailableTimePos']
+
+    if TimePos == 'Middle':
+
+        StartTime = st + win_length / (Fs * 2)
+        EndTime = ft - win_length / (Fs * 2)
+
+    elif TimePos == 'Start':
+
+        StartTime = st
+        EndTime = ft - win_length / (Fs)
+
+    elif TimePos == 'End':
+
+        StartTime = st + win_length / (Fs)
+        EndTime = ft
+
+    NumberOfTimeSamples = int(np.ceil(((ft - st) * Fs - win_length + 1) / (win_length * (1 - overlap_ratio))))
+
+    TimeVector = np.linspace(StartTime, EndTime, NumberOfTimeSamples)
+
+    return TimeVector      
