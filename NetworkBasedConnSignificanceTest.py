@@ -8,6 +8,7 @@ from Utils import Constants
 from Utils import SciPlot as SP
 
 from tqdm import tqdm
+
 from Utils.InputVariables import CalculationVars as CV
 from Utils.InputVariables import CommonVars as CoV
 
@@ -16,16 +17,16 @@ from Utils.InputVariables import CommonVars as CoV
 group_labels = Constants.LocalDataConstants.Labels['groups']
 data_labels = Constants.LocalDataConstants.Labels['data_block']
 
-ConKers = CV.NetBaseConnCalc['ConKers']
-overlap_ratio = CV.NetBaseConnCalc['OLR']
-win_length = CV.NetBaseConnCalc['WinLen']
-NOIs = CV.NetBaseConnCalc['NOIs']
-Bands = CV.NetBaseConnCalc['Bands']
+ConKers = CV.NetBaseConnSigTest['ConKers']
+overlap_ratio = CV.NetBaseConnSigTest['OLR']
+win_length = CV.NetBaseConnSigTest['WinLen']
+NOIs = CV.NetBaseConnSigTest['NOIs']
+Bands = CV.NetBaseConnSigTest['Bands']
 
-OutSource = CV.NetBaseConnCalc['OutSource']
+OutSource = CV.NetBaseConnSigTest['OutSource']
 
-st = CV.NetBaseConnCalc['st']
-ft = CV.NetBaseConnCalc['ft']
+st = CV.NetBaseConnSigTest['st']
+ft = CV.NetBaseConnSigTest['ft']
 
 Fs = CoV.SamplingFrequency
 
@@ -34,7 +35,7 @@ confile_dir = Constants.LocalDataConstants.directories['n_confile_dir']
 sp = int((st + 0.4) * Fs)
 fp = int((ft + 0.4) * Fs)
 
-NB = ft = CV.NetBaseConnCalc['NB']
+NB = ft = CV.NetBaseConnSigTest['NB']
 TB = Constants.LocalDataConstants.DefaulValues['trial_in_block']
 
 ########################################################### Load Available Data ###########################################################
@@ -58,19 +59,21 @@ for i, sub_i in enumerate(SOI[0]):
 
 ########################################################## Generate Connectivity Data ###########################################################
 
-event_numbers = CV.NetBaseConnCalc['Events']
+event_numbers = [3] # Stim Onset
+
+event_numbers = CV.NetBaseConnSigTest['Events']
 
 specs = {
 
-    'orders_matrix': CV.NetBaseConnCalc['OrderMat'],
+    'orders_matrix': CV.NetBaseConnSigTest['OrderMat'],
     'overlap_ratio': overlap_ratio,
     'window_length': win_length,
     'start time': st,
     'end time': ft,
-    'DecompKern': CV.NetBaseConnCalc['DecompKern'],
-    'CorrCalcFunct': CV.NetBaseConnCalc['CorrCalcFunct'],
-    'AmpBand': CV.NetBaseConnCalc['AmpBand'],
-    'PhaseBand': CV.NetBaseConnCalc['PhaseBand'],
+    'DecompKern': CV.NetBaseConnSigTest['DecompKern'],
+    'CorrCalcFunct': CV.NetBaseConnSigTest['CorrCalcFunct'],
+    'AmpBand': CV.NetBaseConnSigTest['AmpBand'],
+    'PhaseBand': CV.NetBaseConnSigTest['PhaseBand'],
 }
 
 for event in event_numbers:
@@ -107,7 +110,7 @@ for event in event_numbers:
                         Samples = SP.DeterminedBlockSampling(dl, NumBlock = NB, NumSample_inBlock = TB)
                         divData = np.mean(data[Samples], axis = 1)
 
-                        sub_Data = GRC.DynamicConnectivityMeasure(divData, kernel = kernel, Band = Band, OutSource = OutSource, **specs)
+                        sub_Data = GRC.ConnectionSignificance(divData, kernel = kernel, Band = Band, overlap_ratio = specs['overlap_ratio'], window_length = specs['window_length'], orders_matrix = specs['orders_matrix'], inc_channels = Constants.LocalDataConstants.NetworksOfInterest[NOI], AmpBand = 'Gamma', PhaseBand = 'Theta', PhaseAmplitudeCorrelateCalc = 'ModulationIndex')
                         
                         tConDataDict[str(SOI[1][i])] = sub_Data
 
@@ -119,4 +122,4 @@ for event in event_numbers:
 
                     print("Version " + str(version_number) + " of File Saved")
 
-                    SaveFileDir = Local.HandleDir(confile_dir + '\\' + event_name)
+                    SaveFileDir = Local.HandleDir(confile_dir + '\\SignificanceTest_' + event_name)

@@ -6,35 +6,27 @@ from Utils import Constants
 
 from Utils import SciPlot as SP
 
+from Utils.InputVariables import PlotVars as PV
+from Utils.InputVariables import CommonVars as CoV
+
 ########################################################### Define Parameters ###########################################################
 
 group_labels = Constants.LocalDataConstants.Labels['groups']
 data_labels = Constants.LocalDataConstants.Labels['data_block']
 
-# ConKers = [kernel for kernel in Constants.DC_Constants.Properties.keys()]
-ConKers = ['PLI', 'TE', 'dPLI', 'wPLI']
-
-trial_in_block = Constants.LocalDataConstants.DefaulValues['trial_in_block']
-overlap_ratio = Constants.LocalDataConstants.DefaulValues['overlap_ratio']
-win_length = Constants.LocalDataConstants.DefaulValues['window_length']
-
 confile_dir = Constants.LocalDataConstants.directories['n_confile_dir']
 PlotSave_dir = Constants.LocalDataConstants.directories['plotSave_dir']
 
-# NOIs = [Network for Network in Constants.LocalDataConstants.NetworksOfInterest.keys()] # Networks Of Interest!
-NOIs = ['ZeroAxis', 'Frontal', 'OcciTemporal']
-# Bands = Constants.LocalDataConstants.names['freq_bands']
-Bands = ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']
+ConKers = PV.NetBaseConnPlot['ConKers']
 
-Fs = 500
+NOIs = PV.NetBaseConnPlot['NOIs']
+Bands = PV.NetBaseConnPlot['Bands']
 
-st = -0.2
-ft = 0.6
-sp = int((st + 0.4) * Fs)
-fp = int((ft + 0.4) * Fs)
+VerNum = PV.NetBaseConnPlot['VersionNumber']
 
-NB = 2
-TB = trial_in_block = Constants.LocalDataConstants.DefaulValues['trial_in_block']
+Fs = CoV.SamplingFrequency
+
+NB = PV.NetBaseConnPlot['NB']
 
 ########################################################### Load Available Data ###########################################################
 
@@ -57,9 +49,7 @@ for i, sub_i in enumerate(SOI[0]):
 
 ########################################################## Generate Connectivity Data ###########################################################
 
-event_numbers = [0, 3]
-
-time_p = np.linspace(st + win_length / (Fs * 2), ft - win_length / (Fs * 2), int(np.ceil(((ft - st) * Fs - win_length) / (win_length * (1- overlap_ratio)))))
+event_numbers = PV.NetBaseConnPlot['Events']
 
 for event in event_numbers:
     
@@ -74,7 +64,15 @@ for event in event_numbers:
 
                 if Local.BandAvailable(kernel, Band):
 
-                    Data = Local.HandleDataLoad(confile_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
+                    Data, VersionSpecs = Local.HandleDataLoad(confile_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band, version_number = VerNum)
+
+                    st = VersionSpecs['Start Time']
+                    ft = VersionSpecs['End Time']
+
+                    win_length = VersionSpecs['Window_Length']
+                    overlap_ratio = VersionSpecs['Overlap_Ratio']
+
+                    time_p = SP.TimeVectorGenerator(st, ft, Fs, win_length, overlap_ratio, TimePos = PV.NetBaseConnPlot['TimePosition'])
 
                     DataGroups = [[Data[str(SOI[1][sub_i[0]])] for sub_i in SubSub_G] for SubSub_G in Sub_G]
 
@@ -94,7 +92,7 @@ for event in event_numbers:
 
                         for Re_i, ReCh in enumerate(SLChannels):
 
-                            if TrCh != ReCh:
+                            if TrCh != ReCh or Constants.DC_Constants.Properties[kernel]['SelfLoop']:
 
                                 Data4Plot = [np.array(DataGroups[G_i])[:, :, :, Tr_i, Re_i] for G_i in range(len(DataGroups))]
 
@@ -107,11 +105,11 @@ for event in event_numbers:
                                         DataBlock = DataGroup[:, BN, :]
                                         y_U, y_L = SP.ConfidenceBoundsGen(DataBlock)
 
-                                        axs[Gi, 0].plot(time_p, np.mean(DataBlock, axis = 0), label = data_labels[BN])
-                                        axs[Gi, 0].fill_between(time_p, y_U, y_L, alpha = 0.2)
+                                        axs[Gi, 0].plot(time_p[:DataBlock.shape[-1]], np.mean(DataBlock, axis = 0), label = data_labels[BN])
+                                        axs[Gi, 0].fill_between(time_p[:DataBlock.shape[-1]], y_U, y_L, alpha = 0.2)
 
-                                        axs[BN, 1].plot(time_p, np.mean(DataBlock, axis = 0), label = group_labels[Gi])
-                                        axs[BN, 1].fill_between(time_p, y_U, y_L, alpha = 0.2)
+                                        axs[BN, 1].plot(time_p[:DataBlock.shape[-1]], np.mean(DataBlock, axis = 0), label = group_labels[Gi])
+                                        axs[BN, 1].fill_between(time_p[:DataBlock.shape[-1]], y_U, y_L, alpha = 0.2)
 
                                 
 
@@ -124,7 +122,7 @@ for event in event_numbers:
 
                                         axs[i, j].legend()
 
-                                plt.setp(axs, xlim = [time_p[0], time_p[-1]])
+                                plt.setp(axs, xlim = [time_p[0], time_p[:DataBlock.shape[-1]][-1]])
                                 fig.supxlabel("time (s)")
 
                                 SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
@@ -136,9 +134,16 @@ for event in event_numbers:
                                     
                                     print("Saved")
 
+                                elif kernel == 'PAC':
+
+                                    fig.suptitle("Temporal dynamic of " + str(kernel) + " locked on " + event_name + " Onset\nGamma Amplitude of Cluster " + Constants.LocalDataConstants.names['JulyClusterNames'][TrCh] + " and Alpha Phase of Cluster " + Constants.LocalDataConstants.names['JulyClusterNames'][ReCh], fontsize = 15)
+                                    plt.savefig(SavePlotDir + "\defParam_GammaAmplitude_" + Constants.LocalDataConstants.names['JulyClusterNames'][TrCh] + "_AlphaPhase_" + Constants.LocalDataConstants.names['JulyClusterNames'][ReCh] + ".png", format="png")
+
+                                    print("Saved")
+
                                 else:
 
-                                    fig.suptitle("Temporal dynamic of " + str(kernel) + " locked on " + event_name + " Onset\nTransmitter is " + Constants.LocalDataConstants.names['JulyClusterNames'][TrCh] + " and Receiver is " + Constants.LocalDataConstants.names['JulyClusterNames'][ReCh] + " in " + Band + " Band", fontsize = 15)
+                                    fig.suptitle("Temporal dynamic of " + str(kernel) + " locked on " + event_name + " Onset\nTransmitter is " + Constants.LocalDataConstants.names['JulyClusterNames'][TrCh] + " and Receiver is " + Constants.LocalDataConstants.names['JulyClusterNames'][ReCh], fontsize = 15)
                                     fig.savefig(SavePlotDir + "\defParam_Tr_" + Constants.LocalDataConstants.names['JulyClusterNames'][TrCh] + "_Rec_" + Constants.LocalDataConstants.names['JulyClusterNames'][ReCh] + ".png", format="png")
 
                                     print("Saved")
