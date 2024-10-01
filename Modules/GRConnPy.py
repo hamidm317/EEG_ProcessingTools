@@ -2,8 +2,10 @@ import numpy as np
 from Utils.General import *
 
 from kneed import KneeLocator
+from Utils import StatisticalTools as StaToo
+from Kernels import OutSourceKernels as OSK
 
-def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ratio = 0.98, kernel = 'PLI', **kwargs):
+def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ratio = 0.98, kernel = 'PLI', OutSource = False, **kwargs):
 
     # Issues:
 
@@ -15,141 +17,188 @@ def DynamicConnectivityMeasure(Data: np.ndarray, window_length = 100, overlap_ra
         'AmpBand': 'Gamma',
         'SpecDecompKernel': 'Wavelet',
         'PhaseAmplitudeCorrelateCalc': 'MeanVectorLength',
-        'Band': 'All'
+        'Band': 'All',
+        'PermuteBro': False
 
     }
 
     options.update(kwargs)
 
-    # assert len(options) == 9, "Invalid Keyword"
+    if OutSource:
 
-    CoreKernelFunction, KernelProperties = AssignConnectivityFunction(kernel)
+        OutSourceKernelFunction = getattr(OSK, 'OS_' + kernel)
 
-    if KernelProperties['lagged']:
-
-        print("You choose a lagged kernel")
-
-        assert options['orders_matrix'] != None, "An orders matrix (lags) must be provided for lagged connectivities"
-
+        DC_values = OutSourceKernelFunction(Data, window_length = window_length, overlap_ratio = overlap_ratio, **options)
+    
     else:
 
-        print("You choose an instantaneous kernel")
-    
-    
-    assert type(options['inc_channels']) == list or type(options['inc_channels']) == np.ndarray, "Included Channels must be a list or np array"
-    # assert len(options['inc_channels']) > 1 and len(options['inc_channels']) <= Data.shape[-2], "At least two channels and at most number of channels of data must be chosen"
+        CoreKernelFunction, KernelProperties = AssignConnectivityFunction(kernel)
 
-    channels = options['inc_channels']
+        if KernelProperties['lagged']:
 
-    # assert len(options['PhaseBand']) == 2 and len(options['AmpBand']) == 2, "Phase and Amplitude Frequencies must be a list with length equal to 2"
+            print("You choose a lagged kernel")
 
-    specs = {}
-    specs['PhaseBand'] = options['PhaseBand']
-    specs['AmpBand'] = options['AmpBand']
-    
-    specs['SpecDecompKernel'] = options['SpecDecompKernel']
-    specs['PhaseAmplitudeCorrelateCalc'] = options['PhaseAmplitudeCorrelateCalc']
-    
-    specs['Band'] = options['Band']
+            assert options['orders_matrix'] != None, "An orders matrix (lags) must be provided for lagged connectivities"
 
-    assert Data.ndim == 2 or Data.ndim == 3, "Your Data must be 3 or 2 Dimensional, (Trials (optional), Channels, Time)"
+        else:
 
-    if Data.ndim == 2:
+            print("You choose an instantaneous kernel")
+        
+        
+        assert type(options['inc_channels']) == list or type(options['inc_channels']) == np.ndarray, "Included Channels must be a list or np array"
+        
+        channels = options['inc_channels']
 
-        Data = np.reshape(Data, (1, Data.shape[0], Data.shape[1]))
+        
+        specs = {}
+        specs['FilterInKernel'] = True
+        specs['PhaseBand'] = options['PhaseBand']
+        specs['AmpBand'] = options['AmpBand']
+        
+        specs['SpecDecompKernel'] = options['SpecDecompKernel']
+        specs['PhaseAmplitudeCorrelateCalc'] = options['PhaseAmplitudeCorrelateCalc']
+        
+        specs['Band'] = options['Band']
 
-    
-    time_length = Data.shape[-1]
-    # number_of_channels = len(channels)
-    number_of_windows = int((time_length - window_length) / ((1 - overlap_ratio) * window_length)) + 1
-    number_of_trials = Data.shape[0]
+        assert Data.ndim == 2 or Data.ndim == 3, "Your Data must be 3 or 2 Dimensional, (Trials (optional), Channels, Time)"
 
-    DirFlag = KernelProperties['directed']
+        if Data.ndim == 2:
 
-    if len(channels) > 1 and np.all([type(electrode) in [int, np.int32] for electrode in channels]):
+            Data = np.reshape(Data, (1, Data.shape[0], Data.shape[1]))
 
-        i_channels = channels
-        j_channels = channels
+        
+        time_length = Data.shape[-1]
+        number_of_windows = int((time_length - window_length) / ((1 - overlap_ratio) * window_length)) + 1
+        number_of_trials = Data.shape[0]
 
-    elif len(channels) == 2:
+        DirFlag = KernelProperties['directed']
 
-        i_channels = channels[0]
-        j_channels = channels[1]
+        PermutateBro = options['PermuteBro']
 
-        DirFlag = True
+        if len(channels) > 1 and np.all([type(electrode) in [int, np.int32] for electrode in channels]):
 
-    else:
+            i_channels = channels
+            j_channels = channels
 
-        assert False, "Invalid Channels matrix shape"  
+        elif len(channels) == 2:
 
-    
-    order_EF = False
+            i_channels = channels[0]
+            j_channels = channels[1]
 
-    if type(options['orders_matrix']) == int or type(options['orders_matrix']) == float:
+            DirFlag = True
 
-        order_EF = True
-        orders_mat = np.ones((len(i_channels), len(j_channels))) * options['orders_matrix']
+        else:
 
-    else:
+            assert False, "Invalid Channels matrix shape"  
 
-        if type(options['orders_matrix']) == list or type(options['orders_matrix']) == np.ndarray:
+        
+        order_EF = False
+
+        if type(options['orders_matrix']) == int or type(options['orders_matrix']) == float:
 
             order_EF = True
-            orders_mat = np.array(options['orders_matrix'])
+            orders_mat = np.ones((len(i_channels), len(j_channels))) * options['orders_matrix']
 
-            assert orders_mat.ndim == 2 and orders_mat.shape[0] == len(i_channels) and orders_mat.shape[1] == len(j_channels), "Improper Orders Matrix dimensions!"
+        else:
 
-    assert order_EF, "Invalid type of orders matrix"
+            if type(options['orders_matrix']) == list or type(options['orders_matrix']) == np.ndarray:
 
-    specs['est_orders'] = orders_mat
+                order_EF = True
+                orders_mat = np.array(options['orders_matrix'])
 
-    DC_values = np.zeros((number_of_trials, number_of_windows, len(i_channels), len(j_channels)))
+                assert orders_mat.ndim == 2 and orders_mat.shape[0] == len(i_channels) and orders_mat.shape[1] == len(j_channels), "Improper Orders Matrix dimensions!"
 
-    for trial_i in range(number_of_trials):
+        assert order_EF, "Invalid type of orders matrix"
 
-        for win_step in range(number_of_windows):
+        specs['est_orders'] = orders_mat
 
-            # print("In Progress", win_step / number_of_windows * 100, "% ...")
-            # it is not beautiful brother!
+        DC_values = np.zeros((number_of_trials, number_of_windows, len(i_channels), len(j_channels)))
 
-            for i, channel_a in enumerate(i_channels):
+        for trial_i in range(number_of_trials):
 
-                if DirFlag:
+            for win_step in range(number_of_windows):
 
-                    for j, channel_b in enumerate(j_channels):
+                for i, channel_a in enumerate(i_channels):
 
-                        win_stp = int((win_step) * (1 - overlap_ratio) * window_length)
-                        win_enp = win_stp + window_length
+                    if DirFlag:
 
-                        x_t = Data[trial_i, channel_a, win_stp : win_enp]
-                        y_t = Data[trial_i, channel_b, win_stp : win_enp]
+                        for j, channel_b in enumerate(j_channels):
 
-                        specs['i'] = i
-                        specs['j'] = j
+                            win_stp = int((win_step) * (1 - overlap_ratio) * window_length)
+                            win_enp = win_stp + window_length
 
-                        win_DC_val = CoreKernelFunction(x_t, y_t, specs)
+                            if PermutateBro:
 
-                        DC_values[trial_i, win_step, i, j] = win_DC_val
+                                x_t = np.random.permutation(Data[trial_i, channel_a, win_stp : win_enp])
+                                y_t = np.random.permutation(Data[trial_i, channel_b, win_stp : win_enp])
 
-                else:
+                            else:
 
-                    for j, channel_b in enumerate(j_channels[:i]):
+                                x_t = Data[trial_i, channel_a, win_stp : win_enp]
+                                y_t = Data[trial_i, channel_b, win_stp : win_enp]
 
-                        win_stp = int((win_step) * (1 - overlap_ratio) * window_length)
-                        win_enp = win_stp + window_length
+                            specs['i'] = i
+                            specs['j'] = j
 
-                        x_t = Data[trial_i, channel_a, win_stp : win_enp]
-                        y_t = Data[trial_i, channel_b, win_stp : win_enp]
+                            win_DC_val = CoreKernelFunction(x_t, y_t, specs)
 
-                        specs['i'] = i
-                        specs['j'] = j
+                            DC_values[trial_i, win_step, i, j] = win_DC_val
 
-                        win_DC_val = CoreKernelFunction(x_t, y_t, specs)
+                    else:
 
-                        DC_values[trial_i, win_step, i, j] = win_DC_val
-                        DC_values[trial_i, win_step, j, i] = win_DC_val
+                        for j, channel_b in enumerate(j_channels[:i]):
+
+                            win_stp = int((win_step) * (1 - overlap_ratio) * window_length)
+                            win_enp = win_stp + window_length
+
+                            if PermutateBro:
+
+                                x_t = np.random.permutation(Data[trial_i, channel_a, win_stp : win_enp])
+                                y_t = np.random.permutation(Data[trial_i, channel_b, win_stp : win_enp])
+
+                            else:
+
+                                x_t = Data[trial_i, channel_a, win_stp : win_enp]
+                                y_t = Data[trial_i, channel_b, win_stp : win_enp]
+
+                            specs['i'] = i
+                            specs['j'] = j
+
+                            win_DC_val = CoreKernelFunction(x_t, y_t, specs)
+
+                            DC_values[trial_i, win_step, i, j] = win_DC_val
+                            DC_values[trial_i, win_step, j, i] = win_DC_val
             
     return np.squeeze(DC_values)
+
+def ConnectionSignificance(Data: np.ndarray, window_length = 100, overlap_ratio = 0.5, kernel = 'PLI', ShamPopulation = 100, TestMetric = 'NonParametric', NonParTestMethod = 'MatWhiU', **kwargs):
+
+    options = {
+
+        'inc_channels': np.arange(Data.shape[-2]),
+        'orders_matrix': None,
+        'PhaseBand': 'Theta',
+        'AmpBand': 'Gamma',
+        'SpecDecompKernel': 'Wavelet',
+        'PhaseAmplitudeCorrelateCalc': 'MeanVectorLength',
+        'Band': 'All',
+        'PermuteBro': True
+
+    }
+
+    options.update(kwargs)
+
+    MainDataConnectivity = DynamicConnectivityMeasure(Data, window_length = window_length, overlap_ratio = overlap_ratio, kernel = kernel, **options)
+
+    ShamDataConnectivity = []
+
+    for _ in range(ShamPopulation):
+
+        ShamDataConnectivity.append(DynamicConnectivityMeasure(Data, window_length = window_length, overlap_ratio = overlap_ratio, kernel = kernel, **options))
+
+    HypoTestResults = StaToo.DistributionSampleTest(Sample = MainDataConnectivity, Population = ShamDataConnectivity, TestDistribution = TestMetric, NonParTestMethod = NonParTestMethod)
+
+    return HypoTestResults
 
 def OrderEstimate_byChannels(Data, max_order = 50, min_order = 2, leap_length = 2, **kwargs):
 
@@ -208,4 +257,3 @@ def OrderEstimate_byChannels(Data, max_order = 50, min_order = 2, leap_length = 
                 orders_mat[a, b] = int(KneeLocator(orders, BICs, curve = 'convex', direction = 'decreasing').knee)
  
     return orders_mat
-
