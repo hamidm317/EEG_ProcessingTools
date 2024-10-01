@@ -119,8 +119,8 @@ def TE(x, y, specs):
     est_order = int(specs['est_orders'][i, j])
 
     Y_t = y[est_order:]
-    Y_lagged = OCM.roll_mat_gen(y, est_order)
-    X_lagged = OCM.roll_mat_gen(x, est_order)
+    Y_lagged = OCM.roll_mat_gen(y, est_order, end_include = False)
+    X_lagged = OCM.roll_mat_gen(x, est_order, end_include = False)
     
     return ee.cmi(Y_t, X_lagged, Y_lagged)
 
@@ -184,24 +184,34 @@ def PAC(x, y, specs):
     # x -> Consider X as Amplitude Signal
     # y -> Consider Y as Phase Signal
 
+    FInKer = specs['FilterInKernel']
+
     x = x / np.sqrt(np.var(x))
     y = y / np.sqrt(np.var(y))
 
-    AmpBand = specs['AmpBand']
-    PhaseBand = specs['PhaseBand']
+    if FInKer:
 
-    SpecDecompMethod = specs['SpecDecompKernel']
+        AmpBand = specs['AmpBand']
+        PhaseBand = specs['PhaseBand']
+
+        SpecDecompMethod = specs['SpecDecompKernel']
+
+        SpecDecomp_Kernel = getattr(SpectralDecompKernels, LDC.names['LocalCM'][SpecDecompMethod])
+
+        X_Filtered = SpecDecomp_Kernel(data = x, Band = AmpBand)
+        Y_Filtered = SpecDecomp_Kernel(data = y, Band = PhaseBand)
+
+        AmpSignal = GRU.PowerPhaseExt(np.mean(X_Filtered[0], axis = 0), return_value = 'Power')[0]
+        PhaSignal = GRU.PowerPhaseExt(np.mean(Y_Filtered[0], axis = 0), return_value = 'Phase')[0]
+
+    else:
+
+        AmpSignal = GRU.PowerPhaseExt(x, return_value = 'Power')[0]
+        PhaSignal = GRU.PowerPhaseExt(y, return_value = 'Phase')[0]
+
     PhaAmpCorrMethod = specs['PhaseAmplitudeCorrelateCalc']
 
-    SpecDecomp_Kernel = getattr(SpectralDecompKernels, LDC.names['LocalCM'][SpecDecompMethod])
     PACorr_Kernel = getattr(CorrKernels, PhaAmpCorrMethod)
-
-    X_Filtered = SpecDecomp_Kernel(data = x, Band = AmpBand)
-    Y_Filtered = SpecDecomp_Kernel(data = y, Band = PhaseBand)
-
-    AmpSignal = GRU.PowerPhaseExt(np.mean(X_Filtered[0], axis = 0), return_value = 'Power')[0]
-    PhaSignal = GRU.PowerPhaseExt(np.mean(Y_Filtered[0], axis = 0), return_value = 'Phase')[0]
-
     PAC_Value = PACorr_Kernel(AmpSig = AmpSignal, PhaSig = PhaSignal)
 
     return PAC_Value
