@@ -4,12 +4,20 @@ import pywt
 from Utils.Constants import LocalDataConstants, SpectralConstants
 from Utils import KernelUtils as KU
 
-def WavletSpectralDecomposer(data: np.ndarray, Band = 'All', wavelet = 'morl', return_freqs = False, **kwargs):
+def WavletSpectralDecomposer(data: np.ndarray, Band = 'All', wavelet = 'morl', return_freqs = False, Fs = LocalDataConstants.DefaulValues['Fs'], **kwargs):
 
+    if str(data.shape[-1]) in SpectralConstants.WaveletParams['time_lims'].keys():
+
+        TimeLims = SpectralConstants.WaveletParams['time_lims'][str(data.shape[-1])]
+
+    else:
+
+        TimeLims = [0, data.shape[-1] / Fs]
+    
     options = {
 
-        'widths_param': SpectralConstants.WaveletParams['widths_param'][wavelet][str(data.shape[-1])][Band],
-        'time_lims': SpectralConstants.WaveletParams['time_lims'][str(data.shape[-1])],
+        'widths_param': SpectralConstants.WaveletParams['widths_param'][wavelet][str(Fs)][Band],
+        'time_lims': TimeLims,
         'Spectral_Res': SpectralConstants.WaveletParams['Spectral_Res']
 
     }
