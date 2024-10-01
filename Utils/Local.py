@@ -126,9 +126,10 @@ def HandleDataLoad(Dir, version_number = None):
 
     assert os.path.isdir(Dir), "This Data is not Available"
 
+    VersionHistoryDF = read_csv(Dir + "\\VersionHistory.csv", index_col = 0)
+
     if version_number is None:
 
-        VersionHistoryDF = read_csv(Dir + "\\VersionHistory.csv", index_col = 0)
         version_number = np.array(VersionHistoryDF['VersionNumber'])[-1]
 
     LoadFileDir = Dir + "\\Data_Version" + str(version_number)
@@ -137,4 +138,6 @@ def HandleDataLoad(Dir, version_number = None):
 
         ConDataDict = pickle.load(f)
 
-    return ConDataDict
+    DataSpecs = {key_SD: VersionHistoryDF[key_SD][version_number] for key_SD in VersionHistoryDF.keys()}
+
+    return ConDataDict, DataSpecs
