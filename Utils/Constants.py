@@ -8,35 +8,40 @@ class DC_Constants():
 
             'directed': False,
             'lagged': False,
-            'AvailableBands': ['All', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']
+            'AvailableBands': ['All', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'],
+            'SelfLoop': False,
         },
 
         'PLV':{
 
             'directed': False,
             'lagged': False,
-            'AvailableBands': ['All']
+            'AvailableBands': ['All', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'],
+            'SelfLoop': False,
         },
 
         'dPLI':{
 
             'directed': True,
             'lagged': False,
-            'AvailableBands': ['All', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']
+            'AvailableBands': ['All', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'],
+            'SelfLoop': False,
         },
 
         'wPLI':{
 
             'directed': True,
             'lagged': False,
-            'AvailableBands': ['All']
+            'AvailableBands': ['All', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'],
+            'SelfLoop': False,
         },
 
         'LRB_GC':{
             
             'directed': True,
             'lagged': True,
-            'AvailableBands': ['All']
+            'AvailableBands': ['All'],
+            'SelfLoop': False,
 
         },
 
@@ -52,7 +57,8 @@ class DC_Constants():
             
             'directed': True,
             'lagged': False,
-            'AvailableBands': ['All']
+            'AvailableBands': ['All'],
+            'SelfLoop': True,
 
         },
 
@@ -60,7 +66,8 @@ class DC_Constants():
             
             'directed': True,
             'lagged': True,
-            'AvailableBands': ['All']
+            'AvailableBands': ['All'],
+            'SelfLoop': False,
 
         }
     }
@@ -166,6 +173,8 @@ class LocalDataConstants():
             'Fs': 500
         },
 
+        'AvailableTimePos': ['Start', 'Middle', 'End'],
+
     }
 
 class SpectralConstants():
@@ -193,7 +202,7 @@ class SpectralConstants():
 
             'morl': {
 
-                '100': {
+                '500': {
 
                     'All': [8, 1024],
                     'Delta': [128, 1024],
@@ -207,52 +216,6 @@ class SpectralConstants():
                     'MidGamma': [9.2, 11],
                     'HighGamma': [8, 9.2],
                 },
-
-                '200': {
-
-                    'All': [8, 1024],
-                    'Delta': [128, 1024],
-                    'Theta': [54, 128],
-                    'Alpha': [32, 54],
-                    'Beta': [13, 32],
-                    'Gamma': [8, 14],
-                    'LowBeta': [20, 32],
-                    'HighBeta': [12, 20],
-                    'LowGamma': [11, 14],
-                    'MidGamma': [9.2, 11],
-                    'HighGamma': [8, 9.2],
-                },
-
-                '400': {
-
-                    'All': [8, 1024],
-                    'Delta': [128, 1024],
-                    'Theta': [54, 128],
-                    'Alpha': [32, 54],
-                    'Beta': [13, 32],
-                    'Gamma': [8, 14],
-                    'LowBeta': [20, 32],
-                    'HighBeta': [12, 20],
-                    'LowGamma': [11, 14],
-                    'MidGamma': [9.2, 11],
-                    'HighGamma': [8, 9.2],
-                },
-
-                '800': {
-
-                    'All': [8, 1024],
-                    'Delta': [128, 1024],
-                    'Theta': [54, 128],
-                    'Alpha': [32, 54],
-                    'Beta': [13, 32],
-                    'Gamma': [8, 14],
-                    'LowBeta': [20, 32],
-                    'HighBeta': [12, 20],
-                    'LowGamma': [11, 14],
-                    'MidGamma': [9.2, 11],
-                    'HighGamma': [8, 9.2],
-                }
-
             }
 
         },
@@ -262,9 +225,19 @@ class SpectralConstants():
             '100': [0, 0.2],
             '200': [0, 0.4],
             '400': [-0.2, 0.6],
-            '800': [-0.4, 1.2]
+            '500': [-0.4, 0.6],
+            '800': [-0.4, 1.2],
+            'Default': 'No'
 
         },
 
-        'Spectral_Res': 100
+        'Spectral_Res': 20
+    }
+
+class StaConstants():
+
+    Distributions = {
+
+        'Availables': ['NormalPDF']
+
     }
