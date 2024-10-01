@@ -28,15 +28,23 @@ def LRB_mulvar_e(x, y, k):
 
     return 1 - LR_M.score(XY, X_des)
 
-def roll_mat_gen(x, k):
+def roll_mat_gen(x, k, end_include = True):
 
     assert x.ndim == 1, "x must be a vector"
+
+    if end_include:
+
+        bs = 1
+
+    else:
+
+        bs = 0
 
     X_rm = []
 
     N = len(x)
 
-    for i in range(N - k + 1):
+    for i in range(N - k + bs):
 
         X_rm.append(x[i : i + k])
 
