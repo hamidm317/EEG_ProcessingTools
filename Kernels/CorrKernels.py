@@ -26,7 +26,7 @@ def ModulationIndex(AmpSig, PhaSig, NumberOfBins = None, DistanceFunction = 'Kul
 
     if NumberOfBins == None:
 
-        NumberOfBins = 36
+        NumberOfBins = KC.CorrelationKernels['NumberOfBins']
 
     AmpProxyDist = KU.ProxyDistribution([AmpSig, PhaSig], Bins = np.linspace(-np.pi, np.pi, NumberOfBins))
 
