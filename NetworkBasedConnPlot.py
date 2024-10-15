@@ -11,6 +11,9 @@ from Utils.InputVariables import CommonVars as CoV
 
 ########################################################### Define Parameters ###########################################################
 
+DataName = PV.NetBaseConnPlot['DataName']
+NodeNames = Constants.LocalDataConstants.names[DataName + 'ClusterNames']
+
 group_labels = Constants.LocalDataConstants.Labels['groups']
 data_labels = Constants.LocalDataConstants.Labels['data_block']
 
@@ -76,7 +79,7 @@ for event in event_numbers:
 
                     DataGroups = [[Data[str(SOI[1][sub_i[0]])] for sub_i in SubSub_G] for SubSub_G in Sub_G]
 
-                    Channels = Constants.LocalDataConstants.NetworksOfInterest[NOI]
+                    Channels = Constants.LocalDataConstants.NetworksOfInterest[DataName][NOI]
 
                     for Tr_i, TrCh in enumerate(Channels):
 
@@ -125,26 +128,32 @@ for event in event_numbers:
                                 plt.setp(axs, xlim = [time_p[0], time_p[:DataBlock.shape[-1]][-1]])
                                 fig.supxlabel("time (s)")
 
-                                SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
+                                if DataName != 'July':
 
-                                if kernel == 'PLI':
+                                    SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + DataName + '\\' + kernel + '\\' + Band)
 
-                                    fig.suptitle("Temporal dynamic of " + str(kernel) + " locked on " + event_name + " Onset\nClusters " + Constants.LocalDataConstants.names['JulyClusterNames'][TrCh] + " and " + Constants.LocalDataConstants.names['JulyClusterNames'][ReCh] + " in " + Band + " Band", fontsize = 15)
-                                    plt.savefig(SavePlotDir + "\defParam_" + Constants.LocalDataConstants.names['JulyClusterNames'][TrCh] + "_" + Constants.LocalDataConstants.names['JulyClusterNames'][ReCh] + ".png", format="png")
+                                else:
+                                    
+                                    SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
+
+                                if not Constants.DC_Constants.Properties[kernel]['directed']:
+
+                                    fig.suptitle("Temporal dynamic of " + str(kernel) + " locked on " + event_name + " Onset\nClusters " + NodeNames[TrCh] + " and " + NodeNames[ReCh] + " in " + Band + " Band", fontsize = 15)
+                                    plt.savefig(SavePlotDir + "\defParam_" + NodeNames[TrCh] + "_" + NodeNames[ReCh] + ".png", format="png")
                                     
                                     print("Saved")
 
-                                elif kernel == 'PAC':
+                                # elif kernel == 'PAC':
 
-                                    fig.suptitle("Temporal dynamic of " + str(kernel) + " locked on " + event_name + " Onset\nGamma Amplitude of Cluster " + Constants.LocalDataConstants.names['JulyClusterNames'][TrCh] + " and Alpha Phase of Cluster " + Constants.LocalDataConstants.names['JulyClusterNames'][ReCh], fontsize = 15)
-                                    plt.savefig(SavePlotDir + "\defParam_GammaAmplitude_" + Constants.LocalDataConstants.names['JulyClusterNames'][TrCh] + "_AlphaPhase_" + Constants.LocalDataConstants.names['JulyClusterNames'][ReCh] + ".png", format="png")
+                                #     fig.suptitle("Temporal dynamic of " + str(kernel) + " locked on " + event_name + " Onset\nGamma Amplitude of Cluster " + NodeNames[TrCh] + " and Theta Phase of Cluster " + NodeNames[ReCh], fontsize = 15)
+                                #     plt.savefig(SavePlotDir + "\\" + DataName + "defParam_GammaAmplitude_" + NodeNames[TrCh] + "_ThetaPhase_" + NodeNames[ReCh] + ".png", format="png")
 
-                                    print("Saved")
+                                #     print("Saved")
 
                                 else:
 
-                                    fig.suptitle("Temporal dynamic of " + str(kernel) + " locked on " + event_name + " Onset\nTransmitter is " + Constants.LocalDataConstants.names['JulyClusterNames'][TrCh] + " and Receiver is " + Constants.LocalDataConstants.names['JulyClusterNames'][ReCh], fontsize = 15)
-                                    fig.savefig(SavePlotDir + "\defParam_Tr_" + Constants.LocalDataConstants.names['JulyClusterNames'][TrCh] + "_Rec_" + Constants.LocalDataConstants.names['JulyClusterNames'][ReCh] + ".png", format="png")
+                                    fig.suptitle("Temporal dynamic of " + str(kernel) + " locked on " + event_name + " Onset\nTransmitter is " + NodeNames[TrCh] + " and Receiver is " + NodeNames[ReCh] + " in " + Band + " Band", fontsize = 15)
+                                    fig.savefig(SavePlotDir + "\defParam_Tr_" + NodeNames[TrCh] + "_Rec_" + NodeNames[ReCh] + ".png", format="png")
 
                                     print("Saved")
 

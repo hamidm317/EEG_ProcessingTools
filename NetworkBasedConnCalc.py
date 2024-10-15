@@ -3,6 +3,7 @@ import pickle
 import scipy.stats as sps
 
 import Modules.GRConnPy as GRC
+import Modules.GRUniPy as GRU
 from Utils import Local
 from Utils import Constants
 from Utils import SciPlot as SP
@@ -13,6 +14,9 @@ from Utils.InputVariables import CommonVars as CoV
 
 ########################################################### Define Parameters ###########################################################
 
+DataName = CV.NetBaseConnCalc['DataName']
+NodeNames = Constants.LocalDataConstants.names[DataName + 'ClusterNames']
+
 group_labels = Constants.LocalDataConstants.Labels['groups']
 data_labels = Constants.LocalDataConstants.Labels['data_block']
 
@@ -21,6 +25,9 @@ overlap_ratio = CV.NetBaseConnCalc['OLR']
 win_length = CV.NetBaseConnCalc['WinLen']
 NOIs = CV.NetBaseConnCalc['NOIs']
 Bands = CV.NetBaseConnCalc['Bands']
+
+
+FilterInKernel = CV.NetBaseConnCalc['FilterInKernel']
 
 OutSource = CV.NetBaseConnCalc['OutSource']
 
@@ -31,11 +38,11 @@ Fs = CoV.SamplingFrequency
 
 confile_dir = Constants.LocalDataConstants.directories['n_confile_dir']
 
-sp = int((st + 0.4) * Fs)
-fp = int((ft + 0.4) * Fs)
+sp = int((st + 1) * Fs)
+fp = int((ft + 1) * Fs)
 
-NB = ft = CV.NetBaseConnCalc['NB']
-TB = Constants.LocalDataConstants.DefaulValues['trial_in_block']
+NB = CV.NetBaseConnCalc['NB']
+TB = CV.NetBaseConnCalc['TB']
 
 ########################################################### Load Available Data ###########################################################
 
@@ -75,9 +82,10 @@ specs = {
 
 for event in event_numbers:
 
-    raw_data, data_lengths = Local.ClusteredEEGLoader(event = event)
-    
     event_name = Constants.LocalDataConstants.names['events'][event]
+
+    raw_data, data_lengths = Local.ClusteredEEGLoader(event = event_name, data_name = CV.NetBaseConnCalc['DataName'])
+    
     print("The Event is " + event_name)
 
     SaveFileDir = Local.HandleDir(confile_dir + '\\' + event_name)
@@ -104,10 +112,27 @@ for event in event_numbers:
 
                         dl = int(data_lengths[i])
                         data = sps.zscore(raw_data[i][:, :, sp : fp], axis = -1)
-                        Samples = SP.DeterminedBlockSampling(dl, NumBlock = NB, NumSample_inBlock = TB)
+
+                        if NB == 1:
+
+                            Samples = SP.RandomBlockSampling(dl, NumBlock = NB, NumSample_inBlock = TB)
+
+                        else:
+
+                            Samples = SP.DeterminedBlockSampling(dl, NumBlock = NB, NumSample_inBlock = TB)
+
                         divData = np.mean(data[Samples], axis = 1)
 
-                        sub_Data = GRC.DynamicConnectivityMeasure(divData, kernel = kernel, Band = Band, OutSource = OutSource, **specs)
+                        if Band != 'All' and not FilterInKernel:
+
+                            divData = GRU.FrequencyBandExt(divData, Band = Band)
+                            Band_ = 'All'
+
+                        else:
+
+                            Band_ = Band
+
+                        sub_Data = GRC.DynamicConnectivityMeasure(divData, kernel = kernel, Band = Band_, OutSource = OutSource, inc_channels = Constants.LocalDataConstants.NetworksOfInterest[DataName][NOI], **specs)
                         
                         tConDataDict[str(SOI[1][i])] = sub_Data
 
