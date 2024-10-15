@@ -22,6 +22,8 @@ warnings.filterwarnings('ignore')
 
 Subs = Local.AvailableSubjects()
 
+confile_dir = LDC.directories['n_confile_dir']
+
 FeatureDraft = pd.read_excel(LDC.directories['fd_excel_dir'], sheet_name = 'Classified')
 
 IgnoreSoAnAnt = True
@@ -81,6 +83,8 @@ for Hypothesis_Num in range(len(FeatureDraft)):
         if FeatureDraft['Window'][Hypothesis_Num] != '?' and FeatureMetric != 'VAGUE':
 
             window = HT.HandleWin(FeatureDraft['Window'][Hypothesis_Num])
+            Network = FeatureDraft['Network'][Hypothesis_Num]
+            VerNum = int(FeatureDraft['VersionNumber'][Hypothesis_Num])
 
             if ORIGIN == 'Univariate': # in the next STEP summarize this part into a Local Function!
 
@@ -97,12 +101,11 @@ for Hypothesis_Num in range(len(FeatureDraft)):
 
             elif ORIGIN == 'Circuit':
 
-                if ~CDD_Av:
+                if not CDD_Av:
 
-                    with open(LDC.directories['confile_dir'], 'rb') as f:
+                    Data, VersionSpecs = Local.HandleDataLoad(confile_dir + '\\' + EVENT + '\\' + Network + '\\' + SUBORIGIN + '\\' + Band, version_number = VerNum)
 
-                        ConDataDict = pickle.load(f)
-                        CDD_Av = True
+                    ConDataDict = Data
 
                 Channels = Clusters_inv
                 SOI = HT.HandleSubjects(Source = 'Both', Antagonist = '')
