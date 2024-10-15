@@ -44,10 +44,10 @@ def PLI(x, y, specs): # the PLI kernel could handle Band itself, but it is recom
     else:
 
         x_b = WSD(x, Band = Band)[0]
-        y_b = WSD(x, Band = Band)[0]
+        y_b = WSD(y, Band = Band)[0]
 
-    x_a = signal.hilbert(x)
-    y_a = signal.hilbert(y)
+    x_a = signal.hilbert(x_b)
+    y_a = signal.hilbert(y_b)
     
     phase_signs = np.sign(np.angle(x_a) - np.angle(y_a))
     
@@ -72,10 +72,10 @@ def PLV(x, y, specs): # the PLI kernel could handle Band itself, but it is recom
     else:
 
         x_b = WSD(x, Band = Band)[0]
-        y_b = WSD(x, Band = Band)[0]
+        y_b = WSD(y, Band = Band)[0]
 
-    x_a = signal.hilbert(x)
-    y_a = signal.hilbert(y)
+    x_a = signal.hilbert(x_b)
+    y_a = signal.hilbert(y_b)
     
     phase_exps = np.exp(1j * (np.angle(x_a) - np.angle(y_a)))
     
@@ -142,10 +142,10 @@ def dPLI(x, y, specs):
     else:
 
         x_b = WSD(x, Band = Band)[0]
-        y_b = WSD(x, Band = Band)[0]
+        y_b = WSD(y, Band = Band)[0]
 
-    x_a = signal.hilbert(x)
-    y_a = signal.hilbert(y)
+    x_a = signal.hilbert(x_b)
+    y_a = signal.hilbert(y_b)
     
     phase_HSs = np.heaviside(np.angle(x_a) - np.angle(y_a), 0)
     
@@ -169,15 +169,15 @@ def wPLI(x, y, specs, eta = 0.00000001):
     else:
 
         x_b = WSD(x, Band = Band)[0]
-        y_b = WSD(x, Band = Band)[0]
+        y_b = WSD(y, Band = Band)[0]
 
-    x_a = signal.hilbert(x)
-    y_a = signal.hilbert(y)
+    x_a = signal.hilbert(x_b)
+    y_a = signal.hilbert(y_b)
     
-    numerator = np.abs(np.mean(np.angle(x_a) - np.angle(y_a)))
-    denominator = np.mean(np.abs(np.angle(x_a) - np.angle(y_a)))
+    numerator = np.abs(np.mean(np.angle(x_a) - np.angle(y_a), axis = 1))
+    denominator = np.mean(np.abs(np.angle(x_a) - np.angle(y_a)), axis = 1)
     
-    return numerator / (denominator)
+    return np.mean(numerator / (denominator + eta))
 
 def PAC(x, y, specs):
 
@@ -215,3 +215,30 @@ def PAC(x, y, specs):
     PAC_Value = PACorr_Kernel(AmpSig = AmpSignal, PhaSig = PhaSignal)
 
     return PAC_Value
+
+def PCor(x, y, specs):
+
+    if 'Band' in specs.keys():
+
+        Band = specs['Band']
+
+    else:
+
+        Band = 'All'
+
+    if Band == 'All':
+    
+        x_b = x
+        y_b = y
+
+    else:
+
+        x_b = np.mean(WSD(x, Band = Band)[0], axis = 0)
+        y_b = np.mean(WSD(y, Band = Band)[0], axis = 0)
+
+    x_a = signal.hilbert(x_b)
+    y_a = signal.hilbert(y_b)
+    
+    CorrCoef = np.corrcoef(np.abs(x_a), np.abs(y_a), rowvar = True)
+    
+    return CorrCoef[0, 1]
