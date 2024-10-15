@@ -6,54 +6,16 @@ import pandas as pd
 from datetime import datetime
 
 import pickle
+from scipy.io import loadmat
 
 from Utils.Constants import LocalDataConstants, DC_Constants
+from Utils import DataLoadUtils as DLU
 
-def ClusteredEEGLoader(event):
+def ClusteredEEGLoader(event, data_name = 'July'):
 
-    if event != 'PosNeg':
+    EEGLoatDataFunction = getattr(DLU, data_name + 'EEGDataLoad')
 
-        eeg_file_dir = LocalDataConstants.directories['eeg_file_dir']
-
-        assert type(event) == int or type(event) == str, "The 'event' must be the event name as string or event number as integer"
-
-        if type(event) == str:
-
-            tmp = [LocalDataConstants.names['events'][i] == event for i in range(len(LocalDataConstants.names['events']))]
-
-            assert np.any(tmp), "The Event is not available"
-
-            event_number = np.where(tmp)[0][0]
-
-        else:
-
-            assert event >= 0 and event < len(LocalDataConstants.names['events']), "The Event is not available"
-            
-            event_number = event
-
-        with h5py.File(eeg_file_dir, 'r') as f:
-
-            raw_data = f['All_data_' + str(LocalDataConstants.names['events'][event_number])][:]
-
-        with h5py.File(eeg_file_dir, 'r') as f:
-
-            data_lengths = f['data_lengths'][event_number, :]
-            
-        raw_data = raw_data.transpose(3, 1, 2, 0)
-
-    else: # Pure Shit, CLEAN THIS SHIT
-
-        events = ['Pos', 'Neg']
-
-        raw_data = []
-        data_lengths = []
-
-        for event in events:
-
-            tmp_raw_data, tmp_data_length = ClusteredEEGLoader(event)
-
-            raw_data.append(tmp_raw_data)
-            data_lengths.append(tmp_data_length)
+    raw_data, data_lengths = EEGLoatDataFunction(event)
 
     return raw_data, data_lengths
 
