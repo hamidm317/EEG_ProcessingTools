@@ -30,7 +30,7 @@ class DC_Constants():
 
         'wPLI':{
 
-            'directed': True,
+            'directed': False,
             'lagged': False,
             'AvailableBands': ['All', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'],
             'SelfLoop': False,
@@ -69,6 +69,15 @@ class DC_Constants():
             'AvailableBands': ['All'],
             'SelfLoop': False,
 
+        },
+
+        'PCor':{
+
+            'directed': False,
+            'lagged': False,
+            'AvailableBands': ['All', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'],
+            'SelfLoop': False,
+                        
         }
     }
 
@@ -91,13 +100,45 @@ class KernelConstants():
             'HypoTestLoopLength': 1,
 
         }
+    },
+
+    CorrelationKernels = {
+
+        'NumberOfBins': 9,
     }
 
 class LocalDataConstants():
 
     directories = {
 
-        'eeg_file_dir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\Clustered_SingleTrialData_All_Neg_Pos_Stim.mat',
+        'eeg_file_dir': {
+            
+            'July': {
+                
+                'Others': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\Clustered_SingleTrialData_All_Neg_Pos_Stim.mat',
+                'Actions': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\Clustered_SingleTrialData_Action.mat',
+
+            },
+
+            'September':{'All': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_AllSepMatClustered_SingleTrialData_All_Neg_Pos_Stim.mat',
+                          'Pos': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_NegSepMatClustered_SingleTrialData_All_Neg_Pos_Stim.mat',
+                          'Neg': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_PosSepMatClustered_SingleTrialData_All_Neg_Pos_Stim.mat',
+                          'Stim': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_StimSepMatClustered_SingleTrialData_All_Neg_Pos_Stim.mat'},
+
+            'October':{
+
+                'All': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_All_OctMatClustered_SingleTrialData.mat',
+                'Pos': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_Pos_OctMatClustered_SingleTrialData.mat',
+                'Neg': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_Neg_OctMatClustered_SingleTrialData.mat',
+                'Stim': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_Stim_OctMatClustered_SingleTrialData.mat',
+                'Actions': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_Actions_OctMatClustered_SingleTrialData.mat',
+            },
+
+        },
+
+        'ActionDataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\data_lengths_Action.mat',
+        'DataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\data_lengths.mat',
+
         'beh_dir_file': r'E:\HWs\Msc\Research\Research\Depression Dataset\depression_rl_eeg\Depression PS Task\Scripts from Manuscript\Data_4_Import.xlsx',
         'perform_data_dir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\Subjects_Behavioral_datas.csv',
         'eeg_prep_datasets_dir': r'E:\\HWs\Msc\\Research\\Research\\Depression Dataset\\Testing Preprocess',
@@ -111,8 +152,10 @@ class LocalDataConstants():
     names = {
 
         'JulyClusterNames': ['PF', 'LF', 'RF', 'MFC', 'LT', 'RT', 'LFC', 'RFC', 'MPC', 'LPC', 'RPC', 'MP', 'LPO', 'RPO'],
+        'SeptemberClusterNames': ['FPz', 'AF3', 'AF4', 'Fz', 'FCz', 'CPz', 'Pz', 'P3', 'P4', 'POz'],
+        'OctoberClusterNames': ['FPz', 'F7', 'F3', 'Fz', 'F4', 'F8', 'T7', 'C3', 'Cz', 'C4', 'T8', 'P7', 'P3', 'Pz', 'P4', 'P8', 'Oz'],
         'freq_bands': ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma', 'LowBeta', 'HighBeta', 'LowGamma', 'MidGamma', 'HighGamma', 'All'],
-        'events': ['All', 'Neg', 'Pos', 'Stim'],
+        'events': ['All', 'Neg', 'Pos', 'Stim', 'Actions'],
         'LocalCM':{
 
             'Transfer Entropy': 'TE',
@@ -139,10 +182,28 @@ class LocalDataConstants():
 
     NetworksOfInterest = {
 
-        'All': np.arange(14),
-        'ZeroAxis': [0, 3, 8, 11],
-        'Frontal': [0, 1, 2, 3],
-        'OcciTemporal': [4, 5, 12, 13]
+        'July':{
+
+            'All': np.arange(14),
+            'ZeroAxis': [0, 3, 8, 11],
+            'Frontal': [0, 1, 2, 3],
+            'OcciTemporal': [4, 5, 12, 13]
+        
+        },
+
+        'September':{
+
+            'All': np.arange(10),
+            'FrontoParietal_1': [1, 2, 3, 6, 7, 8],
+            'FzPzPair': [3, 6],
+        
+        },
+
+        'October':{
+
+            'All': np.arange(17),
+        
+        },
 
     }
 
