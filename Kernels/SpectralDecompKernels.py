@@ -13,12 +13,28 @@ def WavletSpectralDecomposer(data: np.ndarray, Band = 'All', wavelet = 'morl', r
     else:
 
         TimeLims = [0, data.shape[-1] / Fs]
+
+    if 'Spectral_Res' in kwargs.keys():
+
+        SpecRes = kwargs['Spectral_Res']
+
+    else:
+
+        SpecRes = SpectralConstants.WaveletParams['Spectral_Res']
+
+    if type(Band) == str:
+
+        WiPa = SpectralConstants.WaveletParams['widths_param'][wavelet][str(Fs)][Band]
+
+    else:
+
+        WiPa = KU.AssignWidthsParams(BandRanges = Band, Fs = Fs, Spectral_Res = SpecRes)
     
     options = {
 
-        'widths_param': SpectralConstants.WaveletParams['widths_param'][wavelet][str(Fs)][Band],
+        'widths_param': WiPa,
         'time_lims': TimeLims,
-        'Spectral_Res': SpectralConstants.WaveletParams['Spectral_Res']
+        'Spectral_Res': SpecRes
 
     }
 
