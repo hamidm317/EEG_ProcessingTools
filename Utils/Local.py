@@ -46,10 +46,20 @@ def HandleFileName(SaveFileDir, specs):
 
     if not os.path.isfile(SaveFileDir + "\\VersionHistory.csv"):
 
-        HistoryDict = {'idx': 0, 'VersionNumber': [0], 'Date': [str(CurrentTime.year) + '-' + str(CurrentTime.month) + '-' + str(CurrentTime.day)], 
-                       'Window_Length': [specs['window_length']], 'Overlap_Ratio': [specs['overlap_ratio']], 'Start Time': [specs['start time']],
-                       'End Time': [specs['end time']],
-                       'OrdersMatrix': [specs['orders_matrix']]}
+        if specs['Kernel'] != 'PAC':
+
+            HistoryDict = {'idx': 0, 'VersionNumber': [0], 'Date': [str(CurrentTime.year) + '-' + str(CurrentTime.month) + '-' + str(CurrentTime.day)], 
+                        'Window_Length': [specs['window_length']], 'Overlap_Ratio': [specs['overlap_ratio']], 'Start Time': [specs['start time']],
+                        'End Time': [specs['end time']],
+                        'OrdersMatrix': [specs['orders_matrix']]}
+            
+        else:
+            
+            HistoryDict = {'idx': 0, 'VersionNumber': [0], 'Date': [str(CurrentTime.year) + '-' + str(CurrentTime.month) + '-' + str(CurrentTime.day)], 
+                        'Window_Length': [specs['window_length']], 'Overlap_Ratio': [specs['overlap_ratio']], 'Start Time': [specs['start time']],
+                        'End Time': [specs['end time']],
+                        'OrdersMatrix': [specs['orders_matrix']], 'AmpBand': [specs['AmpBand']], 'PhaBand': [specs['PhaseBand']]}
+
         DF = pd.DataFrame(HistoryDict)
 
         DF.to_csv(SaveFileDir + "\\VersionHistory.csv", index = False)
@@ -62,8 +72,15 @@ def HandleFileName(SaveFileDir, specs):
 
         version_number = HistoryDict['VersionNumber'][len(HistoryDict['VersionNumber']) - 1] + 1
 
-        new_row = [version_number, str(CurrentTime.year) + '-' + str(CurrentTime.month) + '-' + str(CurrentTime.day), specs['window_length'],
-                   specs['overlap_ratio'], specs['start time'], specs['end time'], specs['orders_matrix']]
+        if specs['Kernel'] != 'PAC':
+
+            new_row = [version_number, str(CurrentTime.year) + '-' + str(CurrentTime.month) + '-' + str(CurrentTime.day), specs['window_length'],
+                    specs['overlap_ratio'], specs['start time'], specs['end time'], specs['orders_matrix']]
+            
+        else:
+
+            new_row = [version_number, str(CurrentTime.year) + '-' + str(CurrentTime.month) + '-' + str(CurrentTime.day), specs['window_length'],
+                    specs['overlap_ratio'], specs['start time'], specs['end time'], specs['orders_matrix'], specs['AmpBand'], specs['PhaseBand']]
         
         HistoryDict.loc[len(HistoryDict['VersionNumber'])] = new_row
         HistoryDict.sort_index()
