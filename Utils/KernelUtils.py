@@ -140,3 +140,9 @@ def WeightedInfo(p):
     else:
 
         return p * np.log(p)
+    
+def AssignWidthsParams(BandRanges, Fs, Spectral_Res, wavelet = 'morl'):
+
+    Scales = [pywt.frequency2scale(wavelet = wavelet, freq = BandRange / Fs, precision = Spectral_Res) for BandRange in BandRanges]
+
+    return Scales
