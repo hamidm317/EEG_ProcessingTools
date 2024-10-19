@@ -96,6 +96,8 @@ for event in event_numbers:
 
         for kernel in ConKers:
 
+            specs['Kernel'] = kernel
+
             SaveFileDir = Local.HandleDir(confile_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel)
 
             for Band_i, Band in enumerate(Bands):

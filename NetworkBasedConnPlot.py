@@ -20,6 +20,11 @@ data_labels = Constants.LocalDataConstants.Labels['data_block']
 confile_dir = Constants.LocalDataConstants.directories['n_confile_dir']
 PlotSave_dir = Constants.LocalDataConstants.directories['plotSave_dir']
 
+if PV.NetBaseConnPlot['CommonEraData']:
+
+    confile_dir = confile_dir + "\\CommonEraData"
+    PlotSave_dir = PlotSave_dir + "\\CommonEraPlots"
+
 ConKers = PV.NetBaseConnPlot['ConKers']
 
 NOIs = PV.NetBaseConnPlot['NOIs']
@@ -67,7 +72,15 @@ for event in event_numbers:
 
                 if Local.BandAvailable(kernel, Band):
 
-                    Data, VersionSpecs = Local.HandleDataLoad(confile_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band, version_number = VerNum)
+                    if PV.NetBaseConnPlot['CommonEraData']:
+
+                        DataDir = confile_dir + '\\' + DataName + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band
+
+                    else:
+
+                        DataDir = confile_dir + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band
+
+                    Data, VersionSpecs = Local.HandleDataLoad(DataDir, version_number = VerNum)
 
                     st = VersionSpecs['Start Time']
                     ft = VersionSpecs['End Time']
@@ -128,13 +141,19 @@ for event in event_numbers:
                                 plt.setp(axs, xlim = [time_p[0], time_p[:DataBlock.shape[-1]][-1]])
                                 fig.supxlabel("time (s)")
 
-                                if DataName != 'July':
+                                if PV.NetBaseConnPlot['CommonEraData']:
 
-                                    SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + DataName + '\\' + kernel + '\\' + Band)
-
+                                    SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + DataName + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
+                                
                                 else:
-                                    
-                                    SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
+
+                                    if DataName != 'July':
+
+                                        SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + DataName + '\\' + kernel + '\\' + Band)
+
+                                    else:
+                                        
+                                        SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
 
                                 if not Constants.DC_Constants.Properties[kernel]['directed']:
 
