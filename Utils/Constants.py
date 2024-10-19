@@ -78,7 +78,17 @@ class DC_Constants():
             'AvailableBands': ['All', 'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'],
             'SelfLoop': False,
                         
-        }
+        },
+
+        'DCG_PAC':{
+            
+            'directed': True,
+            'lagged': False,
+            'AvailableBands': ['All'],
+            'SelfLoop': True,
+
+        },
+
     }
 
 class KernelConstants():
@@ -202,6 +212,9 @@ class LocalDataConstants():
         'October':{
 
             'All': np.arange(17),
+            'ZeroAxis': [0, 3, 8, 13, 16],
+            'Frontal': [0, 2, 3, 4],
+            'FrontoPar': [0, 2, 3, 4, 12, 13, 14]
         
         },
 
