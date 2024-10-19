@@ -242,3 +242,34 @@ def PCor(x, y, specs):
     CorrCoef = np.corrcoef(np.abs(x_a), np.abs(y_a), rowvar = True)
     
     return CorrCoef[0, 1]
+
+def DCG_PAC(x, y, specs):
+
+    AmpBand = specs['AmpBand']
+    PhaseBand = specs['PhaseBand']
+
+    SpecDecompMethod = specs['SpecDecompKernel']
+
+    AmpSpecRes = specs['AmpBins']
+    PhaseSpecRes = specs['PhaseBins']
+
+    SpecDecomp_Kernel = getattr(SpectralDecompKernels, LDC.names['LocalCM'][SpecDecompMethod])
+
+    X_Filtered = SpecDecomp_Kernel(data = x, Band = AmpBand, Spectral_Res = AmpSpecRes)
+    Y_Filtered = SpecDecomp_Kernel(data = y, Band = PhaseBand, Spectral_Res = PhaseSpecRes)
+
+    AmpSignal = GRU.PowerPhaseExt(X_Filtered[0], return_value = 'Power')[0]
+    PhaSignal = GRU.PowerPhaseExt(Y_Filtered[0], return_value = 'Phase')[0]
+
+    PhaAmpCorrMethod = specs['PhaseAmplitudeCorrelateCalc']
+    PACorr_Kernel = getattr(CorrKernels, PhaAmpCorrMethod)
+
+    CDG_Mat = np.zeros((AmpSpecRes, PhaseSpecRes))
+
+    for Ai, NB_AmpSignal in enumerate(AmpSignal):
+
+        for Pi, NB_PhaSignal in enumerate(PhaSignal):
+
+            CDG_Mat[Ai, Pi] = PACorr_Kernel(AmpSig = NB_AmpSignal, PhaSig = NB_PhaSignal)
+
+    return CDG_Mat
