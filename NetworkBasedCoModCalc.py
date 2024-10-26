@@ -38,9 +38,6 @@ Fs = CoV.SamplingFrequency
 
 confile_dir = Constants.LocalDataConstants.directories['n_confile_dir']
 
-sp = int((st + 1) * Fs)
-fp = int((ft + 1) * Fs)
-
 NB = CV.NetBaseCoModCalc['NB']
 TB = CV.NetBaseCoModCalc['TB']
 
@@ -69,6 +66,16 @@ specs = {
 for event in event_numbers:
 
     event_name = Constants.LocalDataConstants.names['events'][event]
+
+    if event_name == 'Actions':
+
+        sp = int((st + 1) * Fs)
+        fp = int((ft + 1) * Fs)
+
+    else:
+
+        sp = int((st + 0.4) * Fs)
+        fp = int((ft + 0.4) * Fs)
 
     raw_data, data_lengths = Local.ClusteredEEGLoader(event = event_name, data_name = CV.NetBaseCoModCalc['DataName'])
     
