@@ -41,19 +41,28 @@ def OctoberEEGDataLoad(event):
 
         raw_data = raw_data.transpose(0, 2, 1, 3)
 
-    if event != 'Actions':
+    try:
 
         DataLengthsDir = LocalDataConstants.directories['DataLengthsDir']
 
         f = loadmat(DataLengthsDir)
         data_lengths = f['data_lengths'][:, event_number]
 
-    else:
+    except:
 
-        DataLengthsDir = LocalDataConstants.directories['ActionDataLengthsDir']
+        if event == 'Actions':
 
-        f = loadmat(DataLengthsDir)
-        data_lengths = f['data_lengths']
+            DataLengthsDir = LocalDataConstants.directories['ActionDataLengthsDir']
+
+            f = loadmat(DataLengthsDir)
+            data_lengths = f['data_lengths']
+
+        else:
+
+            DataLengthsDir = LocalDataConstants.directories[event + 'DataLengthsDir']
+
+            f = loadmat(DataLengthsDir)
+            data_lengths = f['data_lengths']
 
     return raw_data, data_lengths
 
