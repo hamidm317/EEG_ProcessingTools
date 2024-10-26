@@ -142,11 +142,15 @@ class LocalDataConstants():
                 'Neg': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_Neg_OctMatClustered_SingleTrialData.mat',
                 'Stim': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_Stim_OctMatClustered_SingleTrialData.mat',
                 'Actions': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_Actions_OctMatClustered_SingleTrialData.mat',
+                'TestStim': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_TestStim_OctMatClustered_SingleTrialData.mat',
+                'TestActions': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_TestActions_OctMatClustered_SingleTrialData.mat',
             },
 
         },
 
         'ActionDataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\data_lengths_Action.mat',
+        'TestActionsDataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\TestActions_data_lengths.mat',
+        'TestStimDataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\TestStim_data_lengths.mat',
         'DataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\data_lengths.mat',
 
         'beh_dir_file': r'E:\HWs\Msc\Research\Research\Depression Dataset\depression_rl_eeg\Depression PS Task\Scripts from Manuscript\Data_4_Import.xlsx',
@@ -165,7 +169,7 @@ class LocalDataConstants():
         'SeptemberClusterNames': ['FPz', 'AF3', 'AF4', 'Fz', 'FCz', 'CPz', 'Pz', 'P3', 'P4', 'POz'],
         'OctoberClusterNames': ['FPz', 'F7', 'F3', 'Fz', 'F4', 'F8', 'T7', 'C3', 'Cz', 'C4', 'T8', 'P7', 'P3', 'Pz', 'P4', 'P8', 'Oz'],
         'freq_bands': ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma', 'LowBeta', 'HighBeta', 'LowGamma', 'MidGamma', 'HighGamma', 'All'],
-        'events': ['All', 'Neg', 'Pos', 'Stim', 'Actions'],
+        'events': ['All', 'Neg', 'Pos', 'Stim', 'Actions', 'TestStim', 'TestActions'],
         'LocalCM':{
 
             'Transfer Entropy': 'TE',
@@ -197,7 +201,8 @@ class LocalDataConstants():
             'All': np.arange(14),
             'ZeroAxis': [0, 3, 8, 11],
             'Frontal': [0, 1, 2, 3],
-            'OcciTemporal': [4, 5, 12, 13]
+            'OcciTemporal': [4, 5, 12, 13],
+            'FrontoParietal': [0, 11],
         
         },
 
@@ -214,7 +219,8 @@ class LocalDataConstants():
             'All': np.arange(17),
             'ZeroAxis': [0, 3, 8, 13, 16],
             'Frontal': [0, 2, 3, 4],
-            'FrontoPar': [0, 2, 3, 4, 12, 13, 14]
+            'FrontoPar': [0, 2, 3, 4, 13],
+            'FzPz': [3, 13],
         
         },
 
@@ -275,6 +281,24 @@ class SpectralConstants():
         'widths_param':{
 
             'morl': {
+
+                '500': {
+
+                    'All': [8, 1024],
+                    'Delta': [128, 1024],
+                    'Theta': [54, 128],
+                    'Alpha': [32, 54],
+                    'Beta': [13, 32],
+                    'Gamma': [8, 14],
+                    'LowBeta': [20, 32],
+                    'HighBeta': [12, 20],
+                    'LowGamma': [11, 14],
+                    'MidGamma': [9.2, 11],
+                    'HighGamma': [8, 9.2],
+                },
+            },
+
+            'cmor': {
 
                 '500': {
 
