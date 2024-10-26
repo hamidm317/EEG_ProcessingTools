@@ -41,13 +41,13 @@ def PLI(x, y, specs): # the PLI kernel could handle Band itself, but it is recom
         x_b = x
         y_b = y
 
+        x_a = signal.hilbert(x_b)
+        y_a = signal.hilbert(y_b)
+
     else:
 
-        x_b = WSD(x, Band = Band)[0]
-        y_b = WSD(y, Band = Band)[0]
-
-    x_a = signal.hilbert(x_b)
-    y_a = signal.hilbert(y_b)
+        x_a = WSD(x, Band = Band, wavelet = 'cmor')[0]
+        y_a = WSD(y, Band = Band, wavelet = 'cmor')[0]
     
     phase_signs = np.sign(np.angle(x_a) - np.angle(y_a))
     
@@ -147,7 +147,7 @@ def dPLI(x, y, specs):
     x_a = signal.hilbert(x_b)
     y_a = signal.hilbert(y_b)
     
-    phase_HSs = np.heaviside(np.angle(x_a) - np.angle(y_a), 0)
+    phase_HSs = np.heaviside(np.angle(x_a) - np.angle(y_a), 0.5)
     
     return np.mean(phase_HSs)
 
@@ -174,8 +174,8 @@ def wPLI(x, y, specs, eta = 0.00000001):
     x_a = signal.hilbert(x_b)
     y_a = signal.hilbert(y_b)
     
-    numerator = np.abs(np.mean(np.angle(x_a) - np.angle(y_a), axis = 1))
-    denominator = np.mean(np.abs(np.angle(x_a) - np.angle(y_a)), axis = 1)
+    numerator = np.abs(np.mean(np.angle(x_a) - np.angle(y_a)))
+    denominator = np.mean(np.abs(np.angle(x_a) - np.angle(y_a)))
     
     return np.mean(numerator / (denominator + eta))
 
@@ -218,6 +218,14 @@ def PAC(x, y, specs):
 
 def PCor(x, y, specs):
 
+    if 'Domain' in specs.keys():
+
+        Domain = specs['Domain']
+
+    else:
+
+        Domain = 'P2P'
+
     if 'Band' in specs.keys():
 
         Band = specs['Band']
@@ -236,10 +244,17 @@ def PCor(x, y, specs):
         x_b = np.mean(WSD(x, Band = Band)[0], axis = 0)
         y_b = np.mean(WSD(y, Band = Band)[0], axis = 0)
 
-    x_a = signal.hilbert(x_b)
-    y_a = signal.hilbert(y_b)
-    
-    CorrCoef = np.corrcoef(np.abs(x_a), np.abs(y_a), rowvar = True)
+    if Domain == 'P2P':
+
+        x_a = np.abs(signal.hilbert(x_b))
+        y_a = np.abs(signal.hilbert(y_b))
+
+    else:
+
+        x_a = x_b
+        y_a = y_b
+        
+    CorrCoef = np.corrcoef(x_a, y_a, rowvar = True)
     
     return CorrCoef[0, 1]
 
