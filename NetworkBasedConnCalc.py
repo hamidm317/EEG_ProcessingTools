@@ -26,6 +26,7 @@ win_length = CV.NetBaseConnCalc['WinLen']
 NOIs = CV.NetBaseConnCalc['NOIs']
 Bands = CV.NetBaseConnCalc['Bands']
 
+CommonEraData = CV.NetBaseConnCalc['CommonEraData']
 
 FilterInKernel = CV.NetBaseConnCalc['FilterInKernel']
 
@@ -36,10 +37,13 @@ ft = CV.NetBaseConnCalc['ft']
 
 Fs = CoV.SamplingFrequency
 
+data_name = CV.NetBaseConnCalc['DataName']
+
 confile_dir = Constants.LocalDataConstants.directories['n_confile_dir']
 
-sp = int((st + 1) * Fs)
-fp = int((ft + 1) * Fs)
+if CommonEraData:
+
+    confile_dir = confile_dir + "\\CommonEraData"
 
 NB = CV.NetBaseConnCalc['NB']
 TB = CV.NetBaseConnCalc['TB']
@@ -78,33 +82,40 @@ specs = {
     'CorrCalcFunct': CV.NetBaseConnCalc['CorrCalcFunct'],
     'AmpBand': CV.NetBaseConnCalc['AmpBand'],
     'PhaseBand': CV.NetBaseConnCalc['PhaseBand'],
+
+    'SingleTrial': CV.NetBaseConnCalc['SingleTrial'],
 }
 
 for event in event_numbers:
 
     event_name = Constants.LocalDataConstants.names['events'][event]
 
-    raw_data, data_lengths = Local.ClusteredEEGLoader(event = event_name, data_name = CV.NetBaseConnCalc['DataName'])
+    if event_name == 'Actions':
+
+        sp = int((st + 1) * Fs)
+        fp = int((ft + 1) * Fs)
+
+    else:
+
+        sp = int((st + 0.4) * Fs)
+        fp = int((ft + 0.4) * Fs)
+
+    raw_data, data_lengths = Local.ClusteredEEGLoader(event = event_name, data_name = data_name)
     
     print("The Event is " + event_name)
 
-    SaveFileDir = Local.HandleDir(confile_dir + '\\' + event_name)
-
     for NOI in NOIs:
-
-        SaveFileDir = Local.HandleDir(confile_dir + '\\' + event_name + '\\' + NOI)
 
         for kernel in ConKers:
 
             specs['Kernel'] = kernel
 
-            SaveFileDir = Local.HandleDir(confile_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel)
-
             for Band_i, Band in enumerate(Bands):
 
                 if Local.BandAvailable(kernel, Band):
 
-                    SaveFileDir = Local.HandleDir(confile_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
+                    # SaveFileDir = Local.HandleDir(confile_dir + '\\' + data_name + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
+                    SaveFileDir = Local.SaveDirGen({'MainDir': confile_dir, 'CurrEventName': event_name, 'Network': NOI, 'KernelName': kernel, 'BandName': Band, 'DataName': data_name, 'Specs': specs})
 
                     tConDataDict = {}
 
@@ -123,20 +134,39 @@ for event in event_numbers:
 
                             Samples = SP.DeterminedBlockSampling(dl, NumBlock = NB, NumSample_inBlock = TB)
 
-                        divData = np.mean(data[Samples], axis = 1)
+                        divData = data[Samples]
 
-                        if Band != 'All' and not FilterInKernel:
+                        if CV.NetBaseConnCalc['SingleTrial']:
 
-                            divData = GRU.FrequencyBandExt(divData, Band = Band)
-                            Band_ = 'All'
+                            BDC_Data = []
+                            sub_Data = []
+
+                            for dataBlock in divData:
+
+                                for SingleTrialData in dataBlock:
+
+                                    tmpDC_Data = GRC.DynamicConnectivityMeasure(SingleTrialData, kernel = kernel, Band = Band, OutSource = OutSource, inc_channels = Constants.LocalDataConstants.NetworksOfInterest[DataName][NOI], **specs)
+
+                                    BDC_Data.append(tmpDC_Data)
+
+                                sub_Data.append(np.mean(np.array(BDC_Data), axis = 0))
 
                         else:
 
-                            Band_ = Band
+                            divData = np.mean(divData, axis = 1)
 
-                        sub_Data = GRC.DynamicConnectivityMeasure(divData, kernel = kernel, Band = Band_, OutSource = OutSource, inc_channels = Constants.LocalDataConstants.NetworksOfInterest[DataName][NOI], **specs)
+                            if Band != 'All' and not FilterInKernel:
+
+                                divData = np.squeeze(np.array([GRU.FrequencyBandExt(divData[i], Band = Band) for i in range(divData.shape[0])]))
+                                Band_ = 'All'
+
+                            else:
+
+                                Band_ = Band
+
+                            sub_Data = GRC.DynamicConnectivityMeasure(divData, kernel = kernel, Band = Band_, OutSource = OutSource, inc_channels = Constants.LocalDataConstants.NetworksOfInterest[DataName][NOI], **specs)
                         
-                        tConDataDict[str(SOI[1][i])] = sub_Data
+                        tConDataDict[str(SOI[1][i])] = np.array(sub_Data)
 
                     SaveFileName, version_number = Local.HandleFileName(SaveFileDir, specs)
 

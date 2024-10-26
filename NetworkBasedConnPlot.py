@@ -72,13 +72,15 @@ for event in event_numbers:
 
                 if Local.BandAvailable(kernel, Band):
 
-                    if PV.NetBaseConnPlot['CommonEraData']:
+                    DataDir = Local.DataDirExt({'MainDir': confile_dir, 'CurrEventName': event_name, 'Network': NOI, 'KernelName': kernel, 'BandName': Band, 'DataName': DataName, 'Specs': PV.NetBaseConnPlot})
 
-                        DataDir = confile_dir + '\\' + DataName + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band
+                    # if PV.NetBaseConnPlot['CommonEraData']:
 
-                    else:
+                    #     DataDir = confile_dir + '\\' + DataName + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band
 
-                        DataDir = confile_dir + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band
+                    # else:
+
+                    #     DataDir = confile_dir + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band
 
                     Data, VersionSpecs = Local.HandleDataLoad(DataDir, version_number = VerNum)
 
@@ -138,22 +140,26 @@ for event in event_numbers:
 
                                         axs[i, j].legend()
 
+                                        axs[i, j].axvline(0)
+
                                 plt.setp(axs, xlim = [time_p[0], time_p[:DataBlock.shape[-1]][-1]])
                                 fig.supxlabel("time (s)")
 
-                                if PV.NetBaseConnPlot['CommonEraData']:
+                                SavePlotDir = Local.PlotSaveGen({'MainDir': PlotSave_dir, 'CurrEventName': event_name, 'Network': NOI, 'KernelName': kernel, 'BandName': Band, 'DataName': DataName, 'Specs': PV.NetBaseConnPlot})
 
-                                    SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + DataName + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
+                                # if PV.NetBaseConnPlot['CommonEraData']:
+
+                                #     SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + DataName + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
                                 
-                                else:
+                                # else:
 
-                                    if DataName != 'July':
+                                #     if DataName != 'July':
 
-                                        SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + DataName + '\\' + kernel + '\\' + Band)
+                                #         SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + DataName + '\\' + kernel + '\\' + Band)
 
-                                    else:
+                                #     else:
                                         
-                                        SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
+                                #         SavePlotDir = Local.HandleDir(PlotSave_dir + '\\' + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band)
 
                                 if not Constants.DC_Constants.Properties[kernel]['directed']:
 
