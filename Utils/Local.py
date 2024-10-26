@@ -120,3 +120,113 @@ def HandleDataLoad(Dir, version_number = None):
     DataSpecs = {key_SD: VersionHistoryDF[key_SD][version_number] for key_SD in VersionHistoryDF.keys()}
 
     return ConDataDict, DataSpecs
+
+def SaveDirGen(SpecsDict):
+
+    confile_dir = SpecsDict['MainDir']
+    data_name = SpecsDict['DataName']
+    event_name = SpecsDict['CurrEventName']
+    kernel = SpecsDict['KernelName']
+    NOI = SpecsDict['Network']
+    Band = SpecsDict['BandName']
+
+    Specs = SpecsDict['Specs']
+
+    CommonDir = confile_dir + '\\' + data_name
+
+    if Specs['SingleTrial']:
+
+        CommonDir = CommonDir + '\\SingleTrialBased'
+
+    else:
+
+        CommonDir = CommonDir + '\\AveragedTrialBased'
+
+
+    if kernel == 'PAC':
+
+        SavingDir = CommonDir + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + 'Amp_' + str(Specs['AmpBand']) + '_Phase_' + str(Specs['PhaseBand'])
+
+    else:
+
+        SavingDir = CommonDir + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band
+
+    SaveFileDir = HandleDir(SavingDir)
+
+    return SaveFileDir
+
+def DataDirExt(SpecsDict):
+
+    confile_dir = SpecsDict['MainDir']
+    data_name = SpecsDict['DataName']
+    event_name = SpecsDict['CurrEventName']
+    kernel = SpecsDict['KernelName']
+    NOI = SpecsDict['Network']
+    Band = SpecsDict['BandName']
+
+    Specs = SpecsDict['Specs']
+
+    CommonEraData = Specs['CommonEraData']
+
+    if CommonEraData:
+
+        CommonDir = confile_dir + '\\' + data_name
+
+        if Specs['SingleTrial']:
+
+            CommonDir = CommonDir + '\\SingleTrialBased'
+
+        else:
+
+            CommonDir = CommonDir + '\\AveragedTrialBased'
+
+    else:
+
+        CommonDir = confile_dir
+
+
+    if kernel == 'PAC':
+
+        SavingDir = CommonDir + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + 'Amp_' + str(Specs['AmpBand']) + '_Phase_' + str(Specs['PhaseBand'])
+
+    else:
+
+        SavingDir = CommonDir + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band
+
+    SaveFileDir = HandleDir(SavingDir)
+
+    return SaveFileDir
+
+def PlotSaveGen(SpecsDict):
+
+    confile_dir = SpecsDict['MainDir']
+    data_name = SpecsDict['DataName']
+    event_name = SpecsDict['CurrEventName']
+    kernel = SpecsDict['KernelName']
+    NOI = SpecsDict['Network']
+    Band = SpecsDict['BandName']
+
+    Specs = SpecsDict['Specs']
+
+    CommonDir = confile_dir + '\\' + data_name
+
+    if Specs['SingleTrial']:
+
+        CommonDir = CommonDir + '\\SingleTrialBased'
+
+    else:
+
+        CommonDir = CommonDir + '\\AveragedTrialBased'
+
+
+    if kernel == 'PAC':
+
+        SavingDir = CommonDir + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + 'Amp_' + str(Specs['AmpBand']) + '_Phase_' + str(Specs['PhaseBand'])
+
+    else:
+
+        SavingDir = CommonDir + "\\" + event_name + '\\' + NOI + '\\' + kernel + '\\' + Band
+
+    SaveFileDir = HandleDir(SavingDir)
+
+    return SaveFileDir
