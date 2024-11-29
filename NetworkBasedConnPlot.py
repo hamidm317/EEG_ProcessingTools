@@ -142,6 +142,11 @@ for event in event_numbers:
 
                                         axs[i, j].axvline(0)
 
+                                        if kernel == 'dPLI':
+
+                                            axs[i, j].axhline(0.5)
+
+
                                 plt.setp(axs, xlim = [time_p[0], time_p[:DataBlock.shape[-1]][-1]])
                                 fig.supxlabel("time (s)")
 
