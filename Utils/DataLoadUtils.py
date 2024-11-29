@@ -27,19 +27,19 @@ def OctoberEEGDataLoad(event):
 
     try:
 
-        with h5py.File(eeg_file_dir, 'r') as f:
-
-            raw_data = f['All_data_' + str(LocalDataConstants.names['events'][event_number])][:]
-
-        raw_data = raw_data.transpose(3, 1, 2, 0)
-
-    except:
-
         f = loadmat(eeg_file_dir)
 
         raw_data = f['All_data_' + str(LocalDataConstants.names['events'][event_number])]
 
         raw_data = raw_data.transpose(0, 2, 1, 3)
+
+    except:
+
+        with h5py.File(eeg_file_dir, 'r') as f:
+
+            raw_data = f['All_data_' + str(LocalDataConstants.names['events'][event_number])][:]
+
+        raw_data = raw_data.transpose(3, 1, 2, 0)
 
     try:
 
