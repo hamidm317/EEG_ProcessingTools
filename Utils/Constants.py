@@ -144,6 +144,9 @@ class LocalDataConstants():
                 'Actions': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_Actions_OctMatClustered_SingleTrialData.mat',
                 'TestStim': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_TestStim_OctMatClustered_SingleTrialData.mat',
                 'TestActions': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_TestActions_OctMatClustered_SingleTrialData.mat',
+                'AB_FB': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_AB_FB_OctMatClustered_SingleTrialData.mat',
+                'CD_FB': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_CD_FB_OctMatClustered_SingleTrialData.mat',
+                'EF_FB': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\All_data_EF_FB_OctMatClustered_SingleTrialData.mat',
             },
 
         },
@@ -152,6 +155,9 @@ class LocalDataConstants():
         'TestActionsDataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\TestActions_data_lengths.mat',
         'TestStimDataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\TestStim_data_lengths.mat',
         'DataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\data_lengths.mat',
+        'AB_FBDataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\data_lengths_AB_FB.mat',
+        'CD_FBDataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\data_lengths_CD_FB.mat',
+        'EF_FBDataLengthsDir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\data_lengths_EF_FB.mat',
 
         'beh_dir_file': r'E:\HWs\Msc\Research\Research\Depression Dataset\depression_rl_eeg\Depression PS Task\Scripts from Manuscript\Data_4_Import.xlsx',
         'perform_data_dir': r'E:\HWs\Msc\Research\Research\Depression Dataset\New Datasets\Subjects_Behavioral_datas.csv',
@@ -169,7 +175,7 @@ class LocalDataConstants():
         'SeptemberClusterNames': ['FPz', 'AF3', 'AF4', 'Fz', 'FCz', 'CPz', 'Pz', 'P3', 'P4', 'POz'],
         'OctoberClusterNames': ['FPz', 'F7', 'F3', 'Fz', 'F4', 'F8', 'T7', 'C3', 'Cz', 'C4', 'T8', 'P7', 'P3', 'Pz', 'P4', 'P8', 'Oz'],
         'freq_bands': ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma', 'LowBeta', 'HighBeta', 'LowGamma', 'MidGamma', 'HighGamma', 'All'],
-        'events': ['All', 'Neg', 'Pos', 'Stim', 'Actions', 'TestStim', 'TestActions'],
+        'events': ['All', 'Neg', 'Pos', 'Stim', 'Actions', 'TestStim', 'TestActions', 'AB_FB', 'CD_FB', 'EF_FB'],
         'LocalCM':{
 
             'Transfer Entropy': 'TE',
